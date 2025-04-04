@@ -5,6 +5,8 @@ import static androidx.constraintlayout.motion.widget.TransitionBuilder.validate
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.method.PasswordTransformationMethod;
+import android.text.method.HideReturnsTransformationMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -12,12 +14,9 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.textfield.TextInputLayout;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
@@ -51,19 +50,37 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
         loginBtn = findViewById(R.id.loginBtn);
         username_ET = findViewById(R.id.username_et);
         password_ET = findViewById(R.id.password_et);
         progressBar = findViewById(R.id.progress_bar);
         utilService = new UtilService();
+
+        // Configure password toggle
+        TextInputLayout passwordInputLayout = findViewById(R.id.password_input_layout);
+        passwordInputLayout.setEndIconMode(TextInputLayout.END_ICON_CUSTOM);
+        passwordInputLayout.setEndIconDrawable(R.drawable.visibility_off);
+
+        passwordInputLayout.setEndIconOnClickListener(new View.OnClickListener() {
+            boolean isPasswordVisible = false;
+
+            @Override
+            public void onClick(View v) {
+                if (isPasswordVisible) {
+                    // Hide password
+                    password_ET.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    passwordInputLayout.setEndIconDrawable(R.drawable.visibility_off); // Set "eye off" icon
+                } else {
+                    // Show password
+                    password_ET.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    passwordInputLayout.setEndIconDrawable(R.drawable.visibility_on); // Set "eye on" icon
+                }
+                isPasswordVisible = !isPasswordVisible;
+                password_ET.setSelection(password_ET.getText().length()); // Move cursor to the end
+            }
+        });
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,15 +89,11 @@ public class LoginActivity extends AppCompatActivity {
                 username = username_ET.getText().toString();
                 password = password_ET.getText().toString();
 
-                if(validate(view)){
-
+                if (validate(view)) {
                     loginUser(view);
-
                 }
-
             }
         });
-
     }
 
     private  void loginUser(View view){
