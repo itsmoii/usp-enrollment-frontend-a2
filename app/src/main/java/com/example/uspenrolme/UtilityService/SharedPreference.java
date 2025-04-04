@@ -40,6 +40,10 @@ public class SharedPreference {
         prefEditor.putBoolean(key, value).commit();
     }
 
+    public void clear(){
+        prefEditor.clear().commit();
+    }
+
 
 
 

@@ -110,10 +110,13 @@ public class LoginActivity extends AppCompatActivity {
                         String token = response.getString("token");
 
                         sharedPref.setValue_string("token", token);
+                        sharedPref.setValue_string("userID", username);
+
+                        Log.d("sharedprefdebug", "storedUserID" +  sharedPref.getValue_string("userID"));
 
                         Toast.makeText(LoginActivity.this, token, Toast.LENGTH_SHORT).show();
 
-                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        startActivity(new Intent(LoginActivity.this, StudentDashboardActivity.class));
                     }
                     progressBar.setVisibility(View.GONE);
                 }catch (JSONException e){
@@ -199,7 +202,7 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences user_pref = getSharedPreferences("user", MODE_PRIVATE);
 
         if(user_pref.contains("token")){
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            startActivity(new Intent(LoginActivity.this, StudentDashboardActivity.class));
             finish();
         }
     }
