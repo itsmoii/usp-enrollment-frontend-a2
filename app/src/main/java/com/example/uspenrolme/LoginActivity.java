@@ -3,6 +3,7 @@ package com.example.uspenrolme;
 import static androidx.constraintlayout.motion.widget.TransitionBuilder.validate;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.method.PasswordTransformationMethod;
@@ -29,6 +30,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.uspenrolme.UtilityService.SharedPreference;
 import com.example.uspenrolme.UtilityService.UtilService;
 
 import org.json.JSONException;
@@ -47,6 +49,8 @@ public class LoginActivity extends AppCompatActivity {
 
     UtilService utilService;
 
+    SharedPreference sharedPref;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +61,7 @@ public class LoginActivity extends AppCompatActivity {
         password_ET = findViewById(R.id.password_et);
         progressBar = findViewById(R.id.progress_bar);
         utilService = new UtilService();
+        sharedPref = new SharedPreference(this);
 
         // Configure password toggle
         TextInputLayout passwordInputLayout = findViewById(R.id.password_input_layout);
@@ -117,9 +122,14 @@ public class LoginActivity extends AppCompatActivity {
                     if (response.getBoolean("success")){
                         String token = response.getString("token");
 
+                        sharedPref.setValue_string("token", token);
+                        sharedPref.setValue_string("userID", username);
+
+                        Log.d("sharedprefdebug", "storedUserID" +  sharedPref.getValue_string("userID"));
+
                         Toast.makeText(LoginActivity.this, token, Toast.LENGTH_SHORT).show();
 
-                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        startActivity(new Intent(LoginActivity.this, StudentDashboardActivity.class));
                     }
                     progressBar.setVisibility(View.GONE);
                 }catch (JSONException e){
@@ -198,6 +208,15 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
 
+        SharedPreferences user_pref = getSharedPreferences("user", MODE_PRIVATE);
 
+        if(user_pref.contains("token")){
+            startActivity(new Intent(LoginActivity.this, StudentDashboardActivity.class));
+            finish();
+        }
+    }
 }

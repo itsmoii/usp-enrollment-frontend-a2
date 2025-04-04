@@ -65,5 +65,10 @@ dependencies {
     //ADDED DEPENDENCIES
     implementation("com.google.android.material:material:1.12.0")
     implementation("com.android.volley:volley:1.2.1")
+<<<<<<< HEAD
     implementation("androidx.cardview:cardview:1.0.0")
+=======
+    implementation ("de.hdodenhof:circleimageview:3.0.0")
+    implementation ("com.squareup.picasso:picasso:2.5.2")
+>>>>>>> 4a6e71a532c740715b70f421cf2a0d3fb7a5afe0
 }
