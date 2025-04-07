@@ -1,9 +1,11 @@
-package com.example.uspenrolme;
+package com.example.uspenrolme.student;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.uspenrolme.R;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

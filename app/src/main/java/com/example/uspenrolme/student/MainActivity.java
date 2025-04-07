@@ -1,9 +1,13 @@
-package com.example.uspenrolme;
+package com.example.uspenrolme.student;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+
+import com.example.uspenrolme.student.RegistrationFragment;
+import com.example.uspenrolme.R;
+
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;

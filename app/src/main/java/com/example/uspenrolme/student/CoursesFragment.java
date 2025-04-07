@@ -1,4 +1,4 @@
-package com.example.uspenrolme;
+package com.example.uspenrolme.student;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -29,33 +29,33 @@ import com.android.volley.toolbox.Volley;
 import com.example.uspenrolme.adapters.CourseAdapter;
 import com.example.uspenrolme.models.Course;
 import com.example.uspenrolme.UtilityService.SharedPreference;
+import com.example.uspenrolme.R;
 
 import com.google.android.material.card.MaterialCardView;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.PointsGraphSeries;
-import com.jjoe64.graphview.series.Series;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class CoursesFragment extends Fragment implements CourseAdapter.OnCourseClickListener {
 
     private LinearLayout coursesContainer;
-    private Button registerButton;
     private ProgressBar progressBar;
     private List<Course> selectedCourses;
     private RequestQueue requestQueue;
-    private Map<String, CourseAdapter> adaptersByLevel;
     private SharedPreference sharedPref;
 
     public CoursesFragment() {
@@ -69,11 +69,10 @@ public class CoursesFragment extends Fragment implements CourseAdapter.OnCourseC
 
         // Initialize UI components
         coursesContainer = view.findViewById(R.id.coursesContainer);
-        registerButton = view.findViewById(R.id.registerButton);
+        Button registerButton = view.findViewById(R.id.registerButton);
         progressBar = view.findViewById(R.id.progressBar); // Ensure this is initialized
         selectedCourses = new ArrayList<>();
         requestQueue = Volley.newRequestQueue(requireContext());
-        adaptersByLevel = new HashMap<>();
         sharedPref = new SharedPreference(requireContext());
 
         // Remove toggleArrow logic
@@ -124,15 +123,15 @@ public class CoursesFragment extends Fragment implements CourseAdapter.OnCourseC
                                                 progressBar.setVisibility(View.GONE);
                                             }
                                         },
-                                        error -> handleError(error));
+                                        this::handleError);
     
                                 requestQueue.add(activeRegistrationsRequest);
                             },
-                            error -> handleError(error));
+                            this::handleError);
     
                     requestQueue.add(completedCoursesRequest);
                 },
-                error -> handleError(error));
+                this::handleError);
     
         requestQueue.add(programCoursesRequest);
     }
@@ -175,7 +174,7 @@ public class CoursesFragment extends Fragment implements CourseAdapter.OnCourseC
     
         // Filter and group courses by level
         for (Course course : programCourses) {
-            String level = course.getCourseCode().substring(2, 3) + "00";
+            String level = course.getCourseCode().charAt(2) + "00";
     
             // Special case for CS001 (categorize under Year 2 Courses)
             if (course.getCourseCode().equals("CS001")) {
@@ -191,7 +190,7 @@ public class CoursesFragment extends Fragment implements CourseAdapter.OnCourseC
             if (!coursesByLevel.containsKey(level)) {
                 coursesByLevel.put(level, new ArrayList<>());
             }
-            coursesByLevel.get(level).add(course);
+            Objects.requireNonNull(coursesByLevel.get(level)).add(course);
         }
     
         // Dynamically create RecyclerViews for each level
@@ -207,7 +206,7 @@ public class CoursesFragment extends Fragment implements CourseAdapter.OnCourseC
         Log.e("CoursesFragment", "Error fetching courses: " + error.getMessage());
         if (error.networkResponse != null) {
             try {
-                String responseBody = new String(error.networkResponse.data, "utf-8");
+                String responseBody = new String(error.networkResponse.data, StandardCharsets.UTF_8);
                 Log.e("CoursesFragment", "Response body: " + responseBody);
             } catch (Exception e) {
                 e.printStackTrace();

@@ -1,8 +1,4 @@
-<<<<<<< HEAD:app/src/main/java/com/example/uspenrolme/LoginActivity.java
-package com.example.uspenrolme;
-=======
 package com.example.uspenrolme.shared;
->>>>>>> 18ad2b71bffcf67e5f3abe5609f4fd71c6160230:app/src/main/java/com/example/uspenrolme/shared/LoginActivity.java
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -35,12 +31,9 @@ import com.android.volley.toolbox.Volley;
 import com.example.uspenrolme.R;
 import com.example.uspenrolme.UtilityService.SharedPreference;
 import com.example.uspenrolme.UtilityService.UtilService;
-<<<<<<< HEAD:app/src/main/java/com/example/uspenrolme/LoginActivity.java
-import com.google.android.material.textfield.TextInputLayout;
-=======
 import com.example.uspenrolme.manager.ManagerDashboardAcitivity;
 import com.example.uspenrolme.student.StudentDashboardActivity;
->>>>>>> 18ad2b71bffcf67e5f3abe5609f4fd71c6160230:app/src/main/java/com/example/uspenrolme/shared/LoginActivity.java
+import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,6 +51,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private UtilService utilService;
     private SharedPreference sharedPref;
+    private RequestQueue requestQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +64,7 @@ public class LoginActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progress_bar);
         utilService = new UtilService();
         sharedPref = new SharedPreference(this);
+        requestQueue = Volley.newRequestQueue(this);
 
         // Configure password toggle
         TextInputLayout passwordInputLayout = findViewById(R.id.password_input_layout);
@@ -98,19 +93,14 @@ public class LoginActivity extends AppCompatActivity {
             username = username_ET.getText().toString();
             password = password_ET.getText().toString();
 
-            if (validate(view)) {
-                loginUser(view);
+            if (validate()) {
+                loginUser();
             }
         });
     }
 
-<<<<<<< HEAD:app/src/main/java/com/example/uspenrolme/LoginActivity.java
-    private void loginUser(View view) {
-=======
     // Validating user credentials in backend
-    private  void loginUser(View view){
-
->>>>>>> 18ad2b71bffcf67e5f3abe5609f4fd71c6160230:app/src/main/java/com/example/uspenrolme/shared/LoginActivity.java
+    private void loginUser() {
         progressBar.setVisibility(View.VISIBLE);
 
         HashMap<String, String> params = new HashMap<>();
@@ -125,98 +115,30 @@ public class LoginActivity extends AppCompatActivity {
                     try {
                         if (response.getBoolean("success")) {
                             String token = response.getString("token");
+                            String role = response.getString("role");
 
                             sharedPref.setValue_string("token", token);
+                            sharedPref.setValue_string("role", role);
                             sharedPref.setValue_string("userID", username);
 
-<<<<<<< HEAD:app/src/main/java/com/example/uspenrolme/LoginActivity.java
-                            Log.d("sharedprefdebug", "Stored UserID: " + sharedPref.getValue_string("userID"));
+                            Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
 
-                            Toast.makeText(LoginActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
-
-                            startActivity(new Intent(LoginActivity.this, StudentDashboardActivity.class));
+                            if (role.equals("student")) {
+                                startActivity(new Intent(LoginActivity.this, StudentDashboardActivity.class));
+                            } else if (role.equals("manager")) {
+                                startActivity(new Intent(LoginActivity.this, ManagerDashboardAcitivity.class));
+                            }
                             finish();
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        utilService.showSnackBar(view, "Error parsing login response.");
+                        Toast.makeText(LoginActivity.this, "Error parsing response", Toast.LENGTH_SHORT).show();
                     }
                     progressBar.setVisibility(View.GONE);
-                },
-                error -> {
-                    Log.e("Login", "Error: " + error.toString());
-                    NetworkResponse response = error.networkResponse;
-                    if (error instanceof ServerError && response != null) {
-                        try {
-                            String res = new String(response.data, HttpHeaderParser.parseCharset(response.headers, "utf-8"));
-                            JSONObject obj = new JSONObject(res);
-                            Toast.makeText(LoginActivity.this, obj.getString("msg"), Toast.LENGTH_SHORT).show();
-                        } catch (JSONException | UnsupportedEncodingException je) {
-                            je.printStackTrace();
-                        }
-                    }
+                }, error -> {
+                    handleError(error);
                     progressBar.setVisibility(View.GONE);
                 }) {
-=======
-                try{
-                    if (response.getBoolean("success")){
-                        String token = response.getString("token");
-                        String role = response.getString("role");
-
-                        sharedPref.setValue_string("token", token);
-                        sharedPref.setValue_string("role", role);
-                        sharedPref.setValue_string("userID", username);
-
-                        Log.d("sharedprefdebug", "storedUserID" +  sharedPref.getValue_string("userID"));
-
-                        Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
-
-                        if (role.equals("student")){
-                            startActivity(new Intent(LoginActivity.this, StudentDashboardActivity.class));
-                        }else if (role.equals("manager")){
-                            startActivity(new Intent(LoginActivity.this, ManagerDashboardAcitivity.class));
-                        }
-
-
-                    }
-                    progressBar.setVisibility(View.GONE);
-                }catch (JSONException e){
-
-                    e.printStackTrace();
-                    progressBar.setVisibility(View.GONE);
-
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("Login", "Error: " + error.toString()); // Log the error
-                NetworkResponse response = error.networkResponse;
-                if(error instanceof ServerError && response != null){
-                    try{
-
-                        String res = new String(response.data, HttpHeaderParser.parseCharset(response.headers, "utf-8"));
-
-                        JSONObject obj = new JSONObject(res);
-                        Toast.makeText(LoginActivity.this, obj.getString("msg"), Toast.LENGTH_SHORT).show();
-                        progressBar.setVisibility(View.GONE);
-
-                    }catch(JSONException |UnsupportedEncodingException je){
-
-                        je.printStackTrace();
-                        progressBar.setVisibility(View.GONE);
-
-                    }
-                }
-
-                if (response != null && response.statusCode == 401){
-                    Toast.makeText(LoginActivity.this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
-                    progressBar.setVisibility(View.GONE);
-                }
-
-            }
-        }){
->>>>>>> 18ad2b71bffcf67e5f3abe5609f4fd71c6160230:app/src/main/java/com/example/uspenrolme/shared/LoginActivity.java
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
@@ -229,43 +151,21 @@ public class LoginActivity extends AppCompatActivity {
         RetryPolicy policy = new DefaultRetryPolicy(socketTime, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
         jsonObjectRequest.setRetryPolicy(policy);
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(jsonObjectRequest);
     }
 
-<<<<<<< HEAD:app/src/main/java/com/example/uspenrolme/LoginActivity.java
-    private boolean validate(View view) {
+    // Login form validation
+    private boolean validate() {
         if (TextUtils.isEmpty(username)) {
-            utilService.showSnackBar(view, "Please enter username");
+            Toast.makeText(LoginActivity.this, "Please enter your username", Toast.LENGTH_SHORT).show();
             return false;
         }
         if (TextUtils.isEmpty(password)) {
-            utilService.showSnackBar(view, "Please enter password");
+            Toast.makeText(LoginActivity.this, "Please enter your password", Toast.LENGTH_SHORT).show();
             return false;
-=======
-    // Login form validation
-    private boolean validate(View view){
-        boolean isValid;
-
-        if(!TextUtils.isEmpty(username)){
-            if(!TextUtils.isEmpty((password))){
-                isValid = true;
-            }else{
-                Toast.makeText(LoginActivity.this, "Please enter your password", Toast.LENGTH_SHORT).show();
-                isValid = false;
-            }
-
-        }else{
-
-            Toast.makeText(LoginActivity.this, "Please enter your username", Toast.LENGTH_SHORT).show();
-            isValid = false;
-
         }
-
-        return isValid;
-
+        return true;
     }
-
 
     // Check if stored token is still valid -> direct to dashboard if it is/ login if expired
     @Override
@@ -277,68 +177,34 @@ public class LoginActivity extends AppCompatActivity {
 
         if (user_pref.contains("token")) {
             validateToken(token);
-            finish();
->>>>>>> 18ad2b71bffcf67e5f3abe5609f4fd71c6160230:app/src/main/java/com/example/uspenrolme/shared/LoginActivity.java
         }
-        return true;
     }
 
+    private void validateToken(String token) {
+        String apiKey = "http://10.0.2.2:5000/api/auth/verify-token";
 
-<<<<<<< HEAD:app/src/main/java/com/example/uspenrolme/LoginActivity.java
-=======
-    private void validateToken(String token){
-
-        String ApiKey = "http://10.0.2.2:5000/api/auth/verify-token";
-
-        SharedPreferences user_pref = getSharedPreferences("user", MODE_PRIVATE);
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, ApiKey, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try{
-                    if(response.getBoolean("valid")){
-                        String role = user_pref.getString("role", "");
-
-                        if(role.equals("student")){
-                            startActivity(new Intent(LoginActivity.this, StudentDashboardActivity.class));
-                        }else if(role.equals("manager")){
-                            startActivity(new Intent(LoginActivity.this, ManagerDashboardAcitivity.class));
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, apiKey, null,
+                response -> {
+                    try {
+                        if (response.getBoolean("valid")) {
+                            String role = sharedPref.getValue_string("role");
+                            if (role.equals("student")) {
+                                startActivity(new Intent(LoginActivity.this, StudentDashboardActivity.class));
+                            } else if (role.equals("manager")) {
+                                startActivity(new Intent(LoginActivity.this, ManagerDashboardAcitivity.class));
+                            }
+                            finish();
+                        } else {
+                            sharedPref.clear();
+                            Toast.makeText(LoginActivity.this, "Token is invalid. Please log in again.", Toast.LENGTH_SHORT).show();
                         }
-
-                        finish();
-
-                    }else{
-                        user_pref.edit().remove("token").apply();
-                        Toast.makeText(LoginActivity.this, "Token is invalid. Login Again", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(LoginActivity.this, LoginActivity.class));
-                        finish();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Toast.makeText(LoginActivity.this, "Error parsing response", Toast.LENGTH_SHORT).show();
                     }
-
-                }catch (JSONException e){
-                    e.printStackTrace();
-                    Toast.makeText(LoginActivity.this, "Error parsing response", Toast.LENGTH_SHORT).show();
-
-                }
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                NetworkResponse response = error.networkResponse;
-                if(error instanceof ServerError && response != null){
-                    Toast.makeText(LoginActivity.this, "Token check failed", Toast.LENGTH_SHORT).show();
-                }else if (error instanceof TimeoutError){
-                    Toast.makeText(LoginActivity.this, "Network timeout. Please Try again", Toast.LENGTH_SHORT).show();
-                }else if(error.networkResponse != null && error.networkResponse.statusCode == 403){
-                    user_pref.edit().remove("token").apply();
-                    startActivity(new Intent(LoginActivity.this, LoginActivity.class));
-                    finish();
-                } else {
-                    Toast.makeText(LoginActivity.this, "Network Error. Please check your connection", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        }){
+                }, error -> {
+                    handleError(error);
+                }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
@@ -351,9 +217,26 @@ public class LoginActivity extends AppCompatActivity {
         RetryPolicy policy = new DefaultRetryPolicy(socketTime, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
         jsonObjectRequest.setRetryPolicy(policy);
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(jsonObjectRequest);
-
     }
->>>>>>> 18ad2b71bffcf67e5f3abe5609f4fd71c6160230:app/src/main/java/com/example/uspenrolme/shared/LoginActivity.java
+
+    private void handleError(VolleyError error) {
+        Log.e("Login", "Error: " + error.toString());
+        NetworkResponse response = error.networkResponse;
+        if (error instanceof ServerError && response != null) {
+            try {
+                String res = new String(response.data, HttpHeaderParser.parseCharset(response.headers, "utf-8"));
+                JSONObject obj = new JSONObject(res);
+                Toast.makeText(LoginActivity.this, obj.getString("msg"), Toast.LENGTH_SHORT).show();
+            } catch (JSONException | UnsupportedEncodingException je) {
+                je.printStackTrace();
+            }
+        } else if (response != null && response.statusCode == 401) {
+            Toast.makeText(LoginActivity.this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
+        } else if (error instanceof TimeoutError) {
+            Toast.makeText(LoginActivity.this, "Network timeout. Please try again.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(LoginActivity.this, "Network error. Please check your connection.", Toast.LENGTH_SHORT).show();
+        }
+    }
 }

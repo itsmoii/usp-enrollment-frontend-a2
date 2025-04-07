@@ -23,7 +23,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.uspenrolme.adapters.RegistrationAdapter;
 import com.example.uspenrolme.models.Registration;
 import com.example.uspenrolme.UtilityService.SharedPreference;
-import com.example.uspenrolme.UtilityService.UtilService;
+import com.example.uspenrolme.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,16 +34,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-<<<<<<< HEAD:app/src/main/java/com/example/uspenrolme/RegistrationFragment.java
-=======
-import com.example.uspenrolme.R;
-
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link RegistrationFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
->>>>>>> 18ad2b71bffcf67e5f3abe5609f4fd71c6160230:app/src/main/java/com/example/uspenrolme/student/RegistrationFragment.java
 public class RegistrationFragment extends Fragment {
 
     private RecyclerView registrationRecyclerView, droppedRegistrationRecyclerView;
@@ -97,11 +87,11 @@ public class RegistrationFragment extends Fragment {
             CoursesFragment coursesFragment = new CoursesFragment();
             requireActivity().getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.content, coursesFragment) // Change made here
-                    .addToBackStack(null) // Add to back stack to allow navigation back
+                    .replace(R.id.content, coursesFragment)
+                    .addToBackStack(null)
                     .commit();
         });
-        
+
         return view;
     }
 
@@ -112,27 +102,27 @@ public class RegistrationFragment extends Fragment {
         progressBar.setVisibility(View.VISIBLE);
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
-            response -> {
-                try {
-                    if (response.getBoolean("success")) {
-                        JSONObject userObj = response.getJSONObject("user");
-                        JSONObject dataObj = userObj.getJSONObject("data");
-                        JSONObject studentProfile = dataObj.getJSONObject("studentProfile");
+                response -> {
+                    try {
+                        if (response.getBoolean("success")) {
+                            JSONObject userObj = response.getJSONObject("user");
+                            JSONObject dataObj = userObj.getJSONObject("data");
+                            JSONObject studentProfile = dataObj.getJSONObject("studentProfile");
 
-                        studentIdTextView.setText(studentProfile.getString("student_id"));
-                        studentNameTextView.setText(studentProfile.getString("first_name") + " " + studentProfile.getString("last_name"));
-                        programTextView.setText(studentProfile.getString("program_code"));
-                        emailTextView.setText(studentProfile.getString("email"));
+                            studentIdTextView.setText(studentProfile.getString("student_id"));
+                            studentNameTextView.setText(studentProfile.getString("first_name") + " " + studentProfile.getString("last_name"));
+                            programTextView.setText(studentProfile.getString("program_code"));
+                            emailTextView.setText(studentProfile.getString("email"));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                progressBar.setVisibility(View.GONE);
-            },
-            error -> {
-                error.printStackTrace();
-                progressBar.setVisibility(View.GONE);
-            }) {
+                    progressBar.setVisibility(View.GONE);
+                },
+                error -> {
+                    error.printStackTrace();
+                    progressBar.setVisibility(View.GONE);
+                }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
@@ -151,29 +141,29 @@ public class RegistrationFragment extends Fragment {
         progressBar.setVisibility(View.VISIBLE);
 
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
-            response -> {
-                try {
-                    List<Registration> registrations = new ArrayList<>();
-                    for (int i = 0; i < response.length(); i++) {
-                        JSONObject obj = response.getJSONObject(i);
-                        registrations.add(new Registration(
-                            obj.getString("course_code"),
-                            obj.getString("course_name"),
-                            obj.getString("course_campus"),
-                            obj.getString("course_mode"),
-                            obj.getString("status")
-                        ));
+                response -> {
+                    try {
+                        List<Registration> registrations = new ArrayList<>();
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject obj = response.getJSONObject(i);
+                            registrations.add(new Registration(
+                                    obj.getString("course_code"),
+                                    obj.getString("course_name"),
+                                    obj.getString("course_campus"),
+                                    obj.getString("course_mode"),
+                                    obj.getString("status")
+                            ));
+                        }
+                        registrationAdapter.setRegistrations(registrations);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                    registrationAdapter.setRegistrations(registrations);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                progressBar.setVisibility(View.GONE);
-            },
-            error -> {
-                error.printStackTrace();
-                progressBar.setVisibility(View.GONE);
-            });
+                    progressBar.setVisibility(View.GONE);
+                },
+                error -> {
+                    error.printStackTrace();
+                    progressBar.setVisibility(View.GONE);
+                });
 
         requestQueue.add(request);
     }
@@ -185,29 +175,29 @@ public class RegistrationFragment extends Fragment {
         progressBar.setVisibility(View.VISIBLE);
 
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
-            response -> {
-                try {
-                    List<Registration> droppedRegistrations = new ArrayList<>();
-                    for (int i = 0; i < response.length(); i++) {
-                        JSONObject obj = response.getJSONObject(i);
-                        droppedRegistrations.add(new Registration(
-                            obj.getString("course_code"),
-                            obj.getString("course_name"),
-                            obj.getString("course_campus"),
-                            obj.getString("course_mode"),
-                            obj.getString("status")
-                        ));
+                response -> {
+                    try {
+                        List<Registration> droppedRegistrations = new ArrayList<>();
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject obj = response.getJSONObject(i);
+                            droppedRegistrations.add(new Registration(
+                                    obj.getString("course_code"),
+                                    obj.getString("course_name"),
+                                    obj.getString("course_campus"),
+                                    obj.getString("course_mode"),
+                                    obj.getString("status")
+                            ));
+                        }
+                        droppedRegistrationAdapter.setRegistrations(droppedRegistrations);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                    droppedRegistrationAdapter.setRegistrations(droppedRegistrations);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                progressBar.setVisibility(View.GONE);
-            },
-            error -> {
-                error.printStackTrace();
-                progressBar.setVisibility(View.GONE);
-            });
+                    progressBar.setVisibility(View.GONE);
+                },
+                error -> {
+                    error.printStackTrace();
+                    progressBar.setVisibility(View.GONE);
+                });
 
         requestQueue.add(request);
     }

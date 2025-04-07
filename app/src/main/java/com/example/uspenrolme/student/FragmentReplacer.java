@@ -1,4 +1,4 @@
-package com.example.uspenrolme;
+package com.example.uspenrolme.student;
 
 import androidx.fragment.app.Fragment;
 
