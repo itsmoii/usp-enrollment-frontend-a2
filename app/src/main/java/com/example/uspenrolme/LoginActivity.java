@@ -1,13 +1,11 @@
 package com.example.uspenrolme;
 
-import static androidx.constraintlayout.motion.widget.TransitionBuilder.validate;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.text.method.PasswordTransformationMethod;
 import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -17,7 +15,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.textfield.TextInputLayout;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
@@ -32,6 +29,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.uspenrolme.UtilityService.SharedPreference;
 import com.example.uspenrolme.UtilityService.UtilService;
+import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,12 +42,11 @@ public class LoginActivity extends AppCompatActivity {
 
     private Button loginBtn;
     private EditText username_ET, password_ET;
-    ProgressBar progressBar;
+    private ProgressBar progressBar;
     private String username, password;
 
-    UtilService utilService;
-
-    SharedPreference sharedPref;
+    private UtilService utilService;
+    private SharedPreference sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,37 +71,30 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (isPasswordVisible) {
-                    // Hide password
                     password_ET.setTransformationMethod(PasswordTransformationMethod.getInstance());
-                    passwordInputLayout.setEndIconDrawable(R.drawable.visibility_off); // Set "eye off" icon
+                    passwordInputLayout.setEndIconDrawable(R.drawable.visibility_off);
                 } else {
-                    // Show password
                     password_ET.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-                    passwordInputLayout.setEndIconDrawable(R.drawable.visibility_on); // Set "eye on" icon
+                    passwordInputLayout.setEndIconDrawable(R.drawable.visibility_on);
                 }
                 isPasswordVisible = !isPasswordVisible;
-                password_ET.setSelection(password_ET.getText().length()); // Move cursor to the end
+                password_ET.setSelection(password_ET.getText().length());
             }
         });
 
-        loginBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                utilService.hideKeyboard(view, LoginActivity.this);
-                username = username_ET.getText().toString();
-                password = password_ET.getText().toString();
+        loginBtn.setOnClickListener(view -> {
+            utilService.hideKeyboard(view, LoginActivity.this);
+            username = username_ET.getText().toString();
+            password = password_ET.getText().toString();
 
-                if (validate(view)) {
-                    loginUser(view);
-                }
+            if (validate(view)) {
+                loginUser(view);
             }
         });
     }
 
-    private  void loginUser(View view){
-
+    private void loginUser(View view) {
         progressBar.setVisibility(View.VISIBLE);
-
 
         HashMap<String, String> params = new HashMap<>();
         params.put("userId", username);
@@ -112,111 +102,70 @@ public class LoginActivity extends AppCompatActivity {
 
         String apiKey = "http://10.0.2.2:5000/api/auth/login";
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, apiKey, new JSONObject(params), new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, apiKey, new JSONObject(params),
+                response -> {
+                    Log.d("Login", "Response: " + response.toString());
+                    try {
+                        if (response.getBoolean("success")) {
+                            String token = response.getString("token");
 
-                Log.d("Login", "Response: " + response.toString());
+                            sharedPref.setValue_string("token", token);
+                            sharedPref.setValue_string("userID", username);
 
-                try{
-                    if (response.getBoolean("success")){
-                        String token = response.getString("token");
+                            Log.d("sharedprefdebug", "Stored UserID: " + sharedPref.getValue_string("userID"));
 
-                        sharedPref.setValue_string("token", token);
-                        sharedPref.setValue_string("userID", username);
+                            Toast.makeText(LoginActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
 
-                        Log.d("sharedprefdebug", "storedUserID" +  sharedPref.getValue_string("userID"));
-
-                        Toast.makeText(LoginActivity.this, token, Toast.LENGTH_SHORT).show();
-
-                        startActivity(new Intent(LoginActivity.this, StudentDashboardActivity.class));
+                            startActivity(new Intent(LoginActivity.this, StudentDashboardActivity.class));
+                            finish();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        utilService.showSnackBar(view, "Error parsing login response.");
                     }
                     progressBar.setVisibility(View.GONE);
-                }catch (JSONException e){
-
-                    e.printStackTrace();
-                    progressBar.setVisibility(View.GONE);
-
-                }
-
-
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("Login", "Error: " + error.toString()); // Log the error
-                NetworkResponse response = error.networkResponse;
-                if(error instanceof ServerError && response != null){
-                    try{
-
-                        String res = new String(response.data, HttpHeaderParser.parseCharset(response.headers, "utf-8"));
-
-                        JSONObject obj = new JSONObject(res);
-                        Toast.makeText(LoginActivity.this, obj.getString("msg"), Toast.LENGTH_SHORT).show();
-                        progressBar.setVisibility(View.GONE);
-
-                    }catch(JSONException |UnsupportedEncodingException je){
-
-                        je.printStackTrace();
-                        progressBar.setVisibility(View.GONE);
-
+                },
+                error -> {
+                    Log.e("Login", "Error: " + error.toString());
+                    NetworkResponse response = error.networkResponse;
+                    if (error instanceof ServerError && response != null) {
+                        try {
+                            String res = new String(response.data, HttpHeaderParser.parseCharset(response.headers, "utf-8"));
+                            JSONObject obj = new JSONObject(res);
+                            Toast.makeText(LoginActivity.this, obj.getString("msg"), Toast.LENGTH_SHORT).show();
+                        } catch (JSONException | UnsupportedEncodingException je) {
+                            je.printStackTrace();
+                        }
                     }
-                }
-
-            }
-        }){
+                    progressBar.setVisibility(View.GONE);
+                }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
                 headers.put("Content-Type", "application/json");
-
-                return params;
+                return headers;
             }
         };
 
         int socketTime = 3000;
         RetryPolicy policy = new DefaultRetryPolicy(socketTime, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-
         jsonObjectRequest.setRetryPolicy(policy);
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(jsonObjectRequest);
-
-
     }
 
-    private boolean validate(View view){
-        boolean isValid;
-
-        if(!TextUtils.isEmpty(username)){
-            if(!TextUtils.isEmpty((password))){
-                isValid = true;
-            }else{
-                utilService.showSnackBar(view, "please enter password");
-                isValid = false;
-            }
-
-        }else{
-
-            utilService.showSnackBar(view, "please enter username");
-            isValid = false;
-
+    private boolean validate(View view) {
+        if (TextUtils.isEmpty(username)) {
+            utilService.showSnackBar(view, "Please enter username");
+            return false;
         }
-
-        return isValid;
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        SharedPreferences user_pref = getSharedPreferences("user", MODE_PRIVATE);
-
-        if(user_pref.contains("token")){
-            startActivity(new Intent(LoginActivity.this, StudentDashboardActivity.class));
-            finish();
+        if (TextUtils.isEmpty(password)) {
+            utilService.showSnackBar(view, "Please enter password");
+            return false;
         }
+        return true;
     }
+
+
 }

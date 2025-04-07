@@ -9,6 +9,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -42,7 +47,7 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class StudentDashboardActivity extends AppCompatActivity {
+public class StudentDashboardActivity  extends AppCompatActivity implements FragmentReplacer  {
 
 
     private Toolbar toolbar;
@@ -144,6 +149,7 @@ public class StudentDashboardActivity extends AppCompatActivity {
     private void initDrawer(){
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction ft = manager.beginTransaction();
+        // Change this line:
         ft.replace(R.id.content, new HomeFragment());
         ft.commit();
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close){
@@ -177,18 +183,23 @@ public class StudentDashboardActivity extends AppCompatActivity {
 
     private void setDrawerClick(int itemId){
         if (itemId == R.id.action_financeMenu) {
+            // **Change this line:**
             getSupportFragmentManager().beginTransaction().replace(R.id.content, new FinanceMenu()).commit();
         } else if (itemId == R.id.action_logout){
             sharedPreference.clear();
             startActivity(new Intent(StudentDashboardActivity.this, LoginActivity.class));
             finish();
         }else if (itemId == R.id.action_home){
+            // **Change this line:**
             getSupportFragmentManager().beginTransaction().replace(R.id.content, new HomeFragment()).commit();
         }else if (itemId == R.id.action_grades){
+            // **Change this line:**
             getSupportFragmentManager().beginTransaction().replace(R.id.content, new GradesFragment()).commit();
         }else if (itemId == R.id.action_registration){
+            // **Change this line:**
             getSupportFragmentManager().beginTransaction().replace(R.id.content, new RegistrationFragment()).commit();
         }else if (itemId == R.id.action_programOutline){
+            // **Change this line:**
             getSupportFragmentManager().beginTransaction().replace(R.id.content, new ProgramOutlineFragment()).commit();
         }
     }
@@ -203,4 +214,15 @@ public class StudentDashboardActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void replaceFragment(@NonNull Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        // **Change this line:**
+        transaction.replace(R.id.content, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
 }

@@ -1,6 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.USPENROLME" parent="Theme.MaterialComponents.DayNight">
+        <!-- Disable the default action bar -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
 
-    <style name="Theme.USPENROLME" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
-
+        <!-- Customize your theme here -->
+        <item name="colorPrimary">@color/blue</item>
+        <item name="colorPrimaryVariant">@color/darkgrey</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/blue</item>
+    </style>
 </resources>
