@@ -10,4 +10,7 @@
     <color name="grey">#D6DBDE</color>
     <color name="darkgrey">#979797</color>
     <color name="blue">#1269b5</color>
+    <color name="paleWhite">#F1EDEE</color>
+    <color name="indigo">#084B83</color>
+    <color name="paleBlue">#EFF7FF</color>
 </resources>

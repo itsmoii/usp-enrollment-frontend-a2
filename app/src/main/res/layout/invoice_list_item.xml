@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@color/paleBlue"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/course_code"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:text="Course Code"
+        android:textSize="14sp"
+        android:fontFamily="@font/monofonto"/>
+    <TextView
+        android:id="@+id/course_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="3"
+        android:text="Course Name"
+        android:textSize="14sp"
+        android:fontFamily="@font/monofonto"/>
+    <TextView
+        android:id="@+id/course_level"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Level"
+        android:textSize="14sp"
+        android:fontFamily="@font/monofonto"/>
+    <TextView
+        android:id="@+id/course_mode"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="3"
+        android:text="Mode"
+        android:textSize="14sp"
+        android:fontFamily="@font/monofonto"/>
+    <TextView
+        android:id="@+id/course_semester"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Semester"
+        android:textSize="14sp"
+        android:fontFamily="@font/monofonto"/>
+    <TextView
+        android:id="@+id/course_amount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:text="Amount"
+        android:textSize="14sp"
+        android:fontFamily="@font/monofonto"/>
+
+</LinearLayout>

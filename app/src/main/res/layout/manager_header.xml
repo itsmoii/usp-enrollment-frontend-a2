@@ -1,51 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="250dp"
-    android:id="@+id/navHeader"
-    android:background="@drawable/teal">
+    android:layout_height="200dp"
+    android:background="@drawable/teal"
+    android:id="@+id/managerHeader">
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:src="@drawable/uspwhitelogo"
-        android:id="@+id/navUSPlogo"
-        android:layout_marginTop="20dp"/>
-    
+        android:layout_marginTop="20dp"
+        android:id="@+id/managerUSPlogo"/>
+
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="200dp"
         android:src="@drawable/img_shadow"/>
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:id="@+id/avatar"
-        android:elevation="30dp"
         android:layout_alignParentTop="true"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="35dp"
+        android:elevation="30dp"
         android:src="@drawable/user_icon"
-        android:layout_marginTop="100dp"
-        android:layout_marginLeft="20dp"/>
-    
+        android:id="@+id/managerAvatar"/>
+
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/avatar"
+        android:layout_below="@+id/managerAvatar"
         android:text=""
-        android:fontFamily="@font/bebas"
         android:textColor="@color/white"
+        android:textSize="18sp"
         android:layout_marginTop="5dp"
         android:layout_marginLeft="12dp"
-        android:textSize="18sp"
-        android:id="@+id/studentName"/>
+        android:id="@+id/managerName"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/studentName"
-        android:orientation="vertical"
-        android:layout_marginTop="10dp">
-
+        android:layout_below="@id/managerName"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -62,16 +60,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=""
-                android:fontFamily="@font/garet"
                 android:textColor="@color/white"
                 android:textSize="13sp"
-                android:layout_marginStart="10dp"
                 android:textStyle="bold"
-                android:id="@+id/user_id"
-                android:gravity="center_vertical"/>
+                android:text=""
+                android:gravity="center_vertical"
+                android:layout_marginStart="10dp"
+                android:id="@+id/manager_id"/>
         </LinearLayout>
-
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -81,7 +77,7 @@
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:elevation="20dp"
+                android:elevation="30dp"
                 android:src="@drawable/email_icon"
                 android:layout_marginStart="5dp"/>
 
@@ -89,16 +85,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=""
-                android:fontFamily="@font/garet"
-                android:textColor="@color/white"
                 android:textSize="13sp"
-                android:gravity="center_vertical"
+                android:textColor="@color/white"
                 android:textStyle="bold"
-                android:id="@+id/user_email"
-                android:layout_marginStart="10dp"/>
+                android:gravity="center_vertical"
+                android:layout_marginStart="10dp"
+                android:id="@+id/manager_email"/>
+
         </LinearLayout>
     </LinearLayout>
-
-
-
 </RelativeLayout>

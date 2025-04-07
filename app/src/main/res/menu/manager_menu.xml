@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/group2"
+        android:checkableBehavior="single">
+        <item
+            android:title="Home"
+            android:id="@+id/action_manager_home"/>
+        <item
+            android:title="Registration Panel"
+            android:id="@+id/action_reg_panel"/>
+        <item
+            android:title="Holds Management"
+            android:id="@+id/action_holds_panel"/>
+        <item
+            android:title="Grades Management"
+            android:id="@+id/action_grades_panel"/>
+        <item
+            android:title="Academic Transcript Requests"
+            android:id="@+id/action_transcript_panel"/>
+        <item
+            android:title="Logout"
+            android:id="@+id/action_manager_logout"/>
+
+    </group>
+
+</menu>

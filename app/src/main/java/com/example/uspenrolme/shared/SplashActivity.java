@@ -1,4 +1,4 @@
-package com.example.uspenrolme;
+package com.example.uspenrolme.shared;
 
 import android.content.Intent;
 import android.os.Build;
@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.example.uspenrolme.R;
 
 public class SplashActivity extends AppCompatActivity {
 

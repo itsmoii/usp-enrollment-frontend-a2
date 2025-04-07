@@ -16,14 +16,17 @@
         android:theme="@style/Theme.USPENROLME"
         tools:targetApi="31">
         <activity
-            android:name=".StudentDashboardActivity"
+            android:name=".manager.ManagerDashboardAcitivity"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".student.StudentDashboardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".shared.LoginActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".SplashActivity"
+            android:name=".shared.SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
