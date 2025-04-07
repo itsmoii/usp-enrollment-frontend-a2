@@ -1,4 +1,4 @@
-package com.example.uspenrolme;
+package com.example.uspenrolme.student;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -34,6 +34,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+<<<<<<< HEAD:app/src/main/java/com/example/uspenrolme/RegistrationFragment.java
+=======
+import com.example.uspenrolme.R;
+
+/**
+ * A simple {@link Fragment} subclass.
+ * Use the {@link RegistrationFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
+>>>>>>> 18ad2b71bffcf67e5f3abe5609f4fd71c6160230:app/src/main/java/com/example/uspenrolme/student/RegistrationFragment.java
 public class RegistrationFragment extends Fragment {
 
     private RecyclerView registrationRecyclerView, droppedRegistrationRecyclerView;

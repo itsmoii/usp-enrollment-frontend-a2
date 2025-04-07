@@ -64,6 +64,7 @@ dependencies {
     // ADDED DEPENDENCIES
     implementation("com.google.android.material:material:1.9.0")
     implementation("com.android.volley:volley:1.2.1")
+<<<<<<< HEAD
     implementation("androidx.cardview:cardview:1.0.0")
     implementation("de.hdodenhof:circleimageview:3.0.0")
     implementation("com.squareup.picasso:picasso:2.5.2")
@@ -73,4 +74,10 @@ dependencies {
     configurations.all {
         exclude(group = "com.android.support")
     }
+=======
+    implementation ("de.hdodenhof:circleimageview:3.0.0")
+    implementation ("com.squareup.picasso:picasso:2.5.2")
+    implementation("androidx.cardview:cardview:1.0.0")
+
+>>>>>>> 18ad2b71bffcf67e5f3abe5609f4fd71c6160230
 }
