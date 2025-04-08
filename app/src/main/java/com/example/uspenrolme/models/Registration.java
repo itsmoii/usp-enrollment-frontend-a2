@@ -21,4 +21,8 @@ public class Registration {
     public String getCourseCampus() { return courseCampus; }
     public String getCourseMode() { return courseMode; }
     public String getStatus() { return status; }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

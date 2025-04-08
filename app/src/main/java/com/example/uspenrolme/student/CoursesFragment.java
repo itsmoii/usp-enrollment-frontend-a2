@@ -25,6 +25,8 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.AuthFailureError;
 import com.android.volley.toolbox.Volley;
 import com.example.uspenrolme.adapters.CourseAdapter;
 import com.example.uspenrolme.models.Course;
@@ -32,6 +34,7 @@ import com.example.uspenrolme.UtilityService.SharedPreference;
 import com.example.uspenrolme.R;
 
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.snackbar.Snackbar;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -272,6 +275,9 @@ public class CoursesFragment extends Fragment implements CourseAdapter.OnCourseC
         CourseAdapter adapter = new CourseAdapter(courses, this);
         recyclerView.setAdapter(adapter);
     
+        // Assign a unique ID to the RecyclerView based on the level
+        recyclerView.setId(View.generateViewId()); // Dynamically generate a unique ID
+    
         // Add spacing above the RecyclerView
         recyclerView.setPadding(0, 16, 0, 0); // Add top padding to create space
         recyclerView.setClipToPadding(false);
@@ -305,214 +311,6 @@ public class CoursesFragment extends Fragment implements CourseAdapter.OnCourseC
         coursesContainer.addView(cardView);
     }
 
-    private void setupPrerequisiteGraph() {
-        String studentId = sharedPref.getValue_string("userID");
-        String programCoursesUrl = "http://10.0.2.2:5000/api/program-courses?studentId=" + studentId;
-        String completedCoursesUrl = "http://10.0.2.2:5000/api/completed-courses?studentId=" + studentId;
-        String prerequisitesUrl = "http://10.0.2.2:5000/api/course-prerequisites";
-    
-        FrameLayout graphContainer = requireView().findViewById(R.id.prerequisiteGraphContainer);
-    
-        // Show progress bar while loading
-        if (progressBar != null) {
-            progressBar.setVisibility(View.VISIBLE);
-        }
-
-        
-    
-        // Fetch program courses, completed courses, and prerequisites
-        JsonArrayRequest programCoursesRequest = new JsonArrayRequest(Request.Method.GET, programCoursesUrl, null,
-                programCoursesResponse -> {
-                    JsonArrayRequest completedCoursesRequest = new JsonArrayRequest(Request.Method.GET, completedCoursesUrl, null,
-                            completedCoursesResponse -> {
-                                JsonArrayRequest prerequisitesRequest = new JsonArrayRequest(Request.Method.GET, prerequisitesUrl, null,
-                                        prerequisitesResponse -> {
-                                            try {
-                                                // Parse responses
-                                                List<Course> programCourses = parseCourses(programCoursesResponse);
-                                                List<Course> completedCourses = parseCourses(completedCoursesResponse);
-                                                List<Course> allCourses = parseCourses(prerequisitesResponse);
-    
-                                                Log.d("CoursesFragment", "Program Courses: " + programCourses.size());
-                                                Log.d("CoursesFragment", "Completed Courses: " + completedCourses.size());
-                                                Log.d("CoursesFragment", "All Courses: " + allCourses.size());
-                                                for (Course course : programCourses) {
-                                                    Log.d("CoursesFragment", "Program Course: " + course.getCourseCode() + ", Prerequisite: " + course.getPreRequisite());
-                                                }
-    
-                                                // Build the graph
-                                                buildPrerequisiteGraph(programCourses, completedCourses, allCourses, graphContainer);
-    
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
-                                                Log.e("CoursesFragment", "Error parsing courses data: " + e.getMessage());
-                                            }
-                                            if (progressBar != null) {
-                                                progressBar.setVisibility(View.GONE);
-                                            }
-                                        },
-                                        error -> handleError(error));
-    
-                                requestQueue.add(prerequisitesRequest);
-                            },
-                            error -> handleError(error));
-    
-                    requestQueue.add(completedCoursesRequest);
-                },
-                error -> handleError(error));
-    
-        requestQueue.add(programCoursesRequest);
-    }
-    
-    private void buildPrerequisiteGraph(List<Course> programCourses, List<Course> completedCourses, List<Course> allCourses, FrameLayout graphContainer) {
-
-        Log.d("GraphDebug", "Program courses count: " + programCourses.size());
-        Log.d("GraphDebug", "Completed courses count: " + completedCourses.size());
-        Log.d("GraphDebug", "All courses count: " + allCourses.size());
-
-
-        GraphView graphView = new GraphView(requireContext());
-        graphView.getViewport().setScalable(true); // Enable zooming
-        graphView.getViewport().setScrollable(true); // Enable scrolling
-    
-        // Create nodes and edges
-        List<DataPoint> nodes = new ArrayList<>();
-        List<DataPoint[]> edges = new ArrayList<>();
-        Map<String, DataPoint> nodePositions = new HashMap<>();
-        Set<String> completedCourseCodes = new HashSet<>();
-    
-        // Populate completed courses
-        for (Course course : completedCourses) {
-            completedCourseCodes.add(course.getCourseCode());
-        }
-    
-        int x = 0, y = 0; // Initial positions for nodes
-        int spacingX = 200; // Horizontal spacing
-        int spacingY = 150; // Vertical spacing
-        int maxColumns = 5; // Maximum nodes per row
-    
-        for (Course course : programCourses) {
-            String courseCode = course.getCourseCode();
-            String prerequisites = course.getPreRequisite();
-    
-            // Create a node for the course
-            DataPoint node = new DataPoint(x, y);
-            nodes.add(node);
-            nodePositions.put(courseCode, node);
-    
-            // Adjust positions for the next node
-            x += spacingX;
-            if (x >= maxColumns * spacingX) {
-                x = 0;
-                y += spacingY;
-            }
-    
-            // Create edges for prerequisites
-            if (!prerequisites.equalsIgnoreCase("None") && !prerequisites.isEmpty()) {
-                String[] prereqArray = prerequisites.split(",");
-                for (String prereq : prereqArray) {
-                    prereq = prereq.trim();
-                    if (!prereq.isEmpty() && nodePositions.containsKey(prereq)) {
-                        edges.add(new DataPoint[]{nodePositions.get(prereq), node});
-                    } else {
-                        Log.w("CoursesFragment", "Prerequisite not found in node positions: " + prereq);
-                    }
-                }
-            }
-
-            if (programCourses.isEmpty() || allCourses.isEmpty()) {
-                // Show placeholder text
-                TextView placeholder = new TextView(getContext());
-                placeholder.setText("No prerequisite data available");
-                placeholder.setGravity(Gravity.CENTER);
-                graphContainer.removeAllViews();
-                graphContainer.addView(placeholder);
-                return;
-            }
-    
-            // Special case for CS400
-            if (courseCode.equals("CS400")) {
-                boolean allLevelsCompleted = true;
-                for (String level : new String[]{"100", "200", "300", "400"}) {
-                    boolean levelCompleted = programCourses.stream()
-                        .filter(c -> c.getCourseCode().startsWith(level))
-                        .allMatch(c -> completedCourseCodes.contains(c.getCourseCode()));
-                    if (!levelCompleted) {
-                        allLevelsCompleted = false;
-                        break;
-                    }
-                }
-                if (allLevelsCompleted && completedCourseCodes.contains("CS001")) {
-                    edges.add(new DataPoint[]{nodePositions.get("CS001"), node});
-                } else {
-                    Log.w("CoursesFragment", "CS400 prerequisites not met.");
-                }
-            }
-        }
-    
-        Log.d("CoursesFragment", "Nodes created: " + nodes.size());
-        for (DataPoint node : nodes) {
-            Log.d("CoursesFragment", "Node: " + node.toString());
-        }
-    
-        Log.d("CoursesFragment", "Edges created: " + edges.size());
-        for (DataPoint[] edge : edges) {
-            Log.d("CoursesFragment", "Edge: " + edge[0].toString() + " -> " + edge[1].toString());
-        }
-    
-        // Add nodes to the graph
-        PointsGraphSeries<DataPoint> nodeSeries = new PointsGraphSeries<>(nodes.toArray(new DataPoint[0]));
-        nodeSeries.setShape(PointsGraphSeries.Shape.POINT);
-        nodeSeries.setColor(Color.BLUE);
-    
-        // Add edges to the graph
-        for (DataPoint[] edge : edges) {
-            LineGraphSeries<DataPoint> edgeSeries = new LineGraphSeries<>(edge);
-            edgeSeries.setColor(Color.GREEN);
-            graphView.addSeries(edgeSeries);
-        }
-    
-        // Add node series last to ensure nodes are on top of edges
-        graphView.addSeries(nodeSeries);
-    
-        // Add the graph to the container
-        graphContainer.removeAllViews();
-        graphContainer.addView(graphView);
-    
-        Log.d("CoursesFragment", "Graph rendered successfully");
-    }
-    
-    private void renderGraph(FrameLayout graphContainer, List<DataPoint> nodes, List<DataPoint[]> edges) {
-        Log.d("CoursesFragment", "renderGraph called with " + nodes.size() + " nodes and " + edges.size() + " edges");
-    
-        GraphView graphView = new GraphView(requireContext());
-        graphView.getViewport().setScalable(true); // Enable zooming
-        graphView.getViewport().setScrollable(true); // Enable scrolling
-    
-        // Add nodes to the graph
-        PointsGraphSeries<DataPoint> nodeSeries = new PointsGraphSeries<>(nodes.toArray(new DataPoint[0]));
-        nodeSeries.setShape(PointsGraphSeries.Shape.POINT);
-        nodeSeries.setColor(Color.BLUE);
-    
-        // Add edges to the graph
-        LineGraphSeries<DataPoint> edgeSeries = new LineGraphSeries<>();
-        for (DataPoint[] edge : edges) {
-            edgeSeries.appendData(edge[0], true, edges.size());
-            edgeSeries.appendData(edge[1], true, edges.size());
-        }
-        edgeSeries.setColor(Color.GREEN);
-    
-        // Add series to the graph
-        graphView.addSeries(nodeSeries);
-        graphView.addSeries(edgeSeries);
-    
-        // Add the graph to the container
-        graphContainer.removeAllViews();
-        graphContainer.addView(graphView);
-    
-        Log.d("CoursesFragment", "Graph rendered successfully");
-    }
-
     @Override
     public void onCourseClick(Course course, boolean isChecked) {
         if (isChecked) {
@@ -523,10 +321,97 @@ public class CoursesFragment extends Fragment implements CourseAdapter.OnCourseC
     }
 
     private void registerSelectedCourses() {
-        // Handle course registration logic here
-        for (Course course : selectedCourses) {
-            Log.d("CoursesFragment", "Registering course: " + course.getCourseCode());
+        if (selectedCourses.isEmpty()) {
+            Log.d("CoursesFragment", "No courses selected for registration.");
+            return;
         }
+    
+        String studentId = sharedPref.getValue_string("userID");
+        String registerCourseUrl = "http://10.0.2.2:5000/api/registerCourse";
+    
+        progressBar.setVisibility(View.VISIBLE);
+    
+        for (Course course : selectedCourses) {
+            JSONObject requestBody = new JSONObject();
+            try {
+                requestBody.put("studentId", studentId);
+                requestBody.put("courseCode", course.getCourseCode());
+                requestBody.put("semester", course.getSemester());
+                requestBody.put("year", 2025); // Hardcoded year, adjust as needed
+            } catch (JSONException e) {
+                e.printStackTrace();
+                continue;
+            }
+    
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, registerCourseUrl, requestBody,
+                    response -> {
+                        try {
+                            if (response.has("message") && response.getString("message").equals("Course registered successfully")) {
+                                Log.d("CoursesFragment", "Successfully registered course: " + course.getCourseCode());
+                                // Remove the course from the available list
+                                removeCourseFromUI(course);
+                                // Optionally refresh active registrations
+                                refreshActiveRegistrations();
+    
+                                // Show a styled Snackbar for successful registration
+                                Snackbar snackbar = Snackbar.make(requireView(), "Course " + course.getCourseCode() + " registered successfully!", Snackbar.LENGTH_LONG);
+                                View snackbarView = snackbar.getView();
+                                snackbarView.setBackgroundColor(getResources().getColor(R.color.green)); // Set background color
+                                TextView textView = snackbarView.findViewById(com.google.android.material.R.id.snackbar_text);
+                                textView.setTextColor(getResources().getColor(R.color.white)); // Set text color
+                                textView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER); // Center align text
+                                snackbar.show();
+                            } else {
+                                Log.e("CoursesFragment", "Failed to register course: " + course.getCourseCode());
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    },
+                    error -> {
+                        error.printStackTrace();
+                        Log.e("CoursesFragment", "Error registering course: " + course.getCourseCode());
+                    }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put("Authorization", "Bearer " + sharedPref.getValue_string("token"));
+                    headers.put("Content-Type", "application/json");
+                    return headers;
+                }
+            };
+    
+            requestQueue.add(request);
+        }
+    
+        progressBar.setVisibility(View.GONE);
+        selectedCourses.clear();
     }
 
+    private void removeCourseFromUI(Course course) {
+        for (int i = 0; i < coursesContainer.getChildCount(); i++) {
+            View cardView = coursesContainer.getChildAt(i);
+            if (cardView instanceof MaterialCardView) {
+                // Find the RecyclerView inside the card view
+                RecyclerView recyclerView = cardView.findViewById(View.generateViewId()); // Use the dynamically generated ID
+                if (recyclerView != null) {
+                    CourseAdapter adapter = (CourseAdapter) recyclerView.getAdapter();
+                    if (adapter != null && adapter.getCourses().contains(course)) {
+                        adapter.removeCourse(course);
+                        adapter.notifyDataSetChanged();
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    
+    private void refreshActiveRegistrations() {
+        RegistrationFragment registrationFragment = (RegistrationFragment) requireActivity()
+                .getSupportFragmentManager()
+                .findFragmentByTag("RegistrationFragment");
+        if (registrationFragment != null) {
+            registrationFragment.loadActiveRegistrations(); // Ensure this method is public
+        }
+    }
 }

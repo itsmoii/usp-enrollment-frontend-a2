@@ -12,7 +12,9 @@
     <color name="darkgrey">#D0D0D0</color>
     <color name="light_gray">#EFEFEF</color>
     <color name="blue">#0056b3</color>
+    <color name="green">#4CAF50</color>
     <color name="orange">#FF8000</color>
+    <color name="red">#F44336</color>
     <color name="paleWhite">#F1EDEE</color>
     <color name="indigo">#084B83</color>
     <color name="paleBlue">#EFF7FF</color>

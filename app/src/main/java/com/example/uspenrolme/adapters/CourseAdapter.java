@@ -16,7 +16,7 @@ import java.util.List;
 
 public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder> {
 
-    private List<Course> courses;
+    private List<Course> courses; // Define the courses variable
     private OnCourseClickListener listener;
 
     public interface OnCourseClickListener {
@@ -26,6 +26,20 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder
     public CourseAdapter(List<Course> courses, OnCourseClickListener listener) {
         this.courses = courses;
         this.listener = listener;
+    }
+
+    public List<Course> getCourses() {
+        return courses; // Return the list of courses
+    }
+
+    public void removeCourse(Course course) {
+        courses.remove(course); // Remove the course from the list
+        notifyDataSetChanged(); // Notify the adapter of the change
+    }
+
+    public void setCourses(List<Course> newCourses) {
+        this.courses = newCourses; // Update the list of courses
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -46,11 +60,6 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder
         return courses.size();
     }
 
-    public void setCourses(List<Course> newCourses) {
-        this.courses = newCourses;
-        notifyDataSetChanged();
-    }
-
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView courseCodeTextView, courseNameTextView, courseModeTextView;
         CheckBox courseCheckBox;
@@ -68,7 +77,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder
             courseNameTextView.setText(course.getTitle());
             courseModeTextView.setText(course.getMode());
             courseCheckBox.setChecked(course.isSelected());
-        
+
             // Set a listener for the CheckBox
             courseCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 course.setSelected(isChecked);

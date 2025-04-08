@@ -16,9 +16,25 @@ import java.util.List;
 public class RegistrationAdapter extends RecyclerView.Adapter<RegistrationAdapter.ViewHolder> {
 
     private List<Registration> registrations;
+    private OnRegistrationClickListener listener;
 
-    public RegistrationAdapter(List<Registration> registrations) {
+    public interface OnRegistrationClickListener {
+        void onRegistrationClick(Registration registration);
+    }
+
+    public RegistrationAdapter(List<Registration> registrations, OnRegistrationClickListener listener) {
         this.registrations = registrations;
+        this.listener = listener;
+    }
+
+    public void setRegistrations(List<Registration> registrations) {
+        this.registrations = registrations;
+        notifyDataSetChanged();
+    }
+
+    // Add this method to return the list of registrations
+    public List<Registration> getRegistrations() {
+        return registrations;
     }
 
     @NonNull
@@ -33,7 +49,11 @@ public class RegistrationAdapter extends RecyclerView.Adapter<RegistrationAdapte
         Registration registration = registrations.get(position);
         holder.courseCodeTextView.setText(registration.getCourseCode());
         holder.courseNameTextView.setText(registration.getCourseName());
-        holder.courseModeTextView.setText(registration.getCourseMode());
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onRegistrationClick(registration);
+            }
+        });
     }
 
     @Override
@@ -42,22 +62,12 @@ public class RegistrationAdapter extends RecyclerView.Adapter<RegistrationAdapte
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView courseCodeTextView, courseNameTextView, courseCampusTextView, courseModeTextView, statusTextView;
+        TextView courseCodeTextView, courseNameTextView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             courseCodeTextView = itemView.findViewById(R.id.courseCodeTextView);
             courseNameTextView = itemView.findViewById(R.id.courseNameTextView);
-            courseCampusTextView = itemView.findViewById(R.id.courseCampusTextView);
-            courseModeTextView = itemView.findViewById(R.id.courseModeTextView);
-            statusTextView = itemView.findViewById(R.id.statusTextView);
         }
     }
-
-    public void setRegistrations(List<Registration> newRegistrations) {
-        this.registrations = newRegistrations;
-        notifyDataSetChanged();
-    }
-    
 }
-
