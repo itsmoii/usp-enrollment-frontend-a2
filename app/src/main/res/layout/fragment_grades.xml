@@ -1,14 +1,69 @@
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".student.GradesFragment">
+    android:background="@color/paleWhite"
+    android:padding="16dp">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-</FrameLayout>
+        <!-- Title Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="GRADES"
+            android:textSize="36sp"
+            android:fontFamily="@font/bebas"
+            android:textColor="@color/indigo"
+            android:textAllCaps="true"
+            android:padding="10dp" />
+
+        <!-- Table Header -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="horizontal">
+
+            <TableLayout
+                android:id="@+id/gradesTable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:stretchColumns="1"
+                android:paddingBottom="16dp" />
+        </HorizontalScrollView>
+
+        <!-- GPA Section -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/grey"
+                android:layout_marginBottom="10dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cumulative GPA:"
+                android:textSize="20sp"
+                android:fontFamily="@font/bebas"
+                android:layout_marginTop="10dp" />
+
+            <TextView
+                android:id="@+id/gpaTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.00"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:fontFamily="@font/bebas"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="10dp" />
+        </RelativeLayout>
+    </LinearLayout>
+</ScrollView>

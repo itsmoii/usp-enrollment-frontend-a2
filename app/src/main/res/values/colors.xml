@@ -18,4 +18,7 @@
     <color name="paleWhite">#F1EDEE</color>
     <color name="indigo">#084B83</color>
     <color name="paleBlue">#EFF7FF</color>
+    <color name="primary_text">#212121</color>
+    <color name="course_block_bg">#3F51B5</color>
+    <color name="course_block_stroke">#303F9F</color>
 </resources>
