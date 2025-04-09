@@ -34,9 +34,10 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Declaration"
-                    android:textColor="@color/blue"
-                    android:textSize="18sp"
+                    android:text="DECLARATION"
+                    android:textSize="24sp"
+                    android:fontFamily="@font/longreach"
+                    android:padding="20dp"
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp" />
 
@@ -44,7 +45,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="By enrolling at the University of the South Pacific, you agree to abide by the rules set out in the Statutes, Ordinances, Regulations, and Charter of the University."
-                    android:textColor="#282828"
+                    android:textColor="@color/gray"
+                    android:textStyle="bold"
                     android:textSize="14sp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -70,9 +72,10 @@
                     android:id="@+id/profileTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Student Profile"
-                    android:textColor="@color/blue"
-                    android:textSize="18sp"
+                    android:text="STUDENT PROFILE"
+                    android:textSize="24sp"
+                    android:fontFamily="@font/longreach"
+                    android:padding="20dp"
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp" />
 
@@ -87,8 +90,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Student ID:"
-                        android:textColor="#282828"
+                        android:textColor="@color/gray"
                         android:textStyle="bold"
+                        android:textSize="14sp"
                         android:layout_marginEnd="8dp" />
 
                     <TextView
@@ -96,7 +100,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="S1119962"
-                        android:textColor="#282828" />
+                        android:textColor="@color/gray"/>
                 </LinearLayout>
 
                 <!-- Student Name -->
@@ -110,8 +114,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Student Name:"
-                        android:textColor="#282828"
+                        android:textColor="@color/gray"
                         android:textStyle="bold"
+                        android:textSize="14sp"
                         android:layout_marginEnd="8dp" />
 
                     <TextView
@@ -119,7 +124,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Sam Robin"
-                        android:textColor="#282828" />
+                        android:textColor="@color/gray"/>
                 </LinearLayout>
 
                 <!-- Program -->
@@ -133,8 +138,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Program:"
-                        android:textColor="#282828"
+                        android:textColor="@color/gray"
                         android:textStyle="bold"
+                        android:textSize="14sp"
                         android:layout_marginEnd="8dp" />
 
                     <TextView
@@ -142,7 +148,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="BSE"
-                        android:textColor="#282828" />
+                        android:textColor="@color/gray"/>
                 </LinearLayout>
 
                 <!-- Email -->
@@ -156,8 +162,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Email:"
-                        android:textColor="#282828"
+                        android:textColor="@color/gray"
                         android:textStyle="bold"
+                        android:textSize="14sp"
                         android:layout_marginEnd="8dp" />
 
                     <TextView
@@ -165,7 +172,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="sam.robin@gmail.com"
-                        android:textColor="#282828" />
+                        android:textColor="@color/gray"/>
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -191,8 +198,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Active Registrations"
-                    android:textColor="@color/blue"
-                    android:textSize="18sp"
+                    android:textSize="24sp"
+                    android:fontFamily="@font/longreach"
+                    android:padding="20dp"
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp" />
 
@@ -207,6 +215,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Add Course"
+                    android:fontFamily="@font/longreach"
                     android:layout_gravity="center_horizontal"
                     style="@style/Widget.MaterialComponents.Button" />
             </LinearLayout>
@@ -233,8 +242,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Dropped Registrations"
-                    android:textColor="@color/blue"
-                    android:textSize="18sp"
+                    android:textSize="24sp"
+                    android:fontFamily="@font/longreach"
+                    android:padding="20dp"
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp" />
 

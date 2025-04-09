@@ -16,6 +16,8 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             app:cardCornerRadius="8dp"
             app:cardElevation="4dp"
@@ -31,16 +33,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:text="Course Selection Per Area"
-                    android:textColor="@color/blue"
-                    android:textSize="18sp"
+                    android:text="Course Selection"
+                    android:textSize="24sp"
+                    android:fontFamily="@font/longreach"
+                    android:padding="20dp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="You are only allowed to select a maximum of 4 courses per semester."
-                    android:textColor="@color/black"
+                    android:textColor="@color/gray"
+                    android:textStyle="bold"
                     android:textSize="14sp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -49,6 +53,8 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             app:cardCornerRadius="8dp"
             app:cardElevation="4dp"
@@ -65,8 +71,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:text="Register for Courses"
-                    android:textColor="@color/blue"
-                    android:textSize="18sp"
+                    android:textSize="24sp"
+                    android:fontFamily="@font/longreach"
+                    android:padding="20dp"
                     android:textStyle="bold" />
 
                 <!-- Dynamic Year Courses -->
@@ -107,10 +114,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Prerequisite Graph"
-                    android:textColor="@color/blue"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="8dp" />
+                    android:textSize="24sp"
+                    android:fontFamily="@font/longreach"
+                    android:padding="20dp"
+                    android:textStyle="bold" />
 
                 <!-- Scrollable and Pannable Graph -->
                 <ScrollView
