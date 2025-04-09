@@ -14,6 +14,14 @@
         android:gravity="center"
         android:padding="16dp">
 
+        <!-- Logo -->
+        <ImageView
+            android:layout_width="320dp"
+            android:layout_height="320dp"
+            android:src="@drawable/uspwhitelogo"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp" />
+
         <!-- Card Container -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -21,21 +29,13 @@
             android:layout_margin="16dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="8dp"
-            android:background="@color/white">
+            android:background="#56FFFFFF">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="24dp">
-
-                <!-- Logo -->
-                <ImageView
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:src="@drawable/usp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="16dp" />
 
                 <!-- Title -->
                 <TextView
@@ -48,28 +48,38 @@
                     android:fontFamily="sans-serif-medium"
                     android:layout_marginBottom="16dp" />
 
-                <!-- Input Fields -->
-                <EditText
-                    android:id="@+id/username_et"
+                <!-- Username Field -->
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Enter Username"
-                    android:background="@drawable/input_field"
-                    android:padding="12dp"
-                    android:layout_marginBottom="16dp"
-                    android:inputType="text"
-                    android:fontFamily="sans-serif" />
+                    android:layout_marginBottom="16dp">
 
-                <EditText
-                    android:id="@+id/password_et"
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/username_et"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Enter Username"
+                        android:inputType="text"
+                        android:fontFamily="sans-serif" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Password Field with Toggle -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/password_input_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Enter Password"
-                    android:background="@drawable/input_field"
-                    android:padding="12dp"
                     android:layout_marginBottom="24dp"
-                    android:inputType="textPassword"
-                    android:fontFamily="sans-serif" />
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@drawable/visibility_off">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/password_et"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Enter Password"
+                        android:inputType="textPassword"
+                        android:fontFamily="sans-serif" />
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Login Button -->
                 <Button
@@ -83,6 +93,12 @@
                     android:textColor="@color/white"
                     android:fontFamily="sans-serif-medium"
                     android:layout_marginBottom="16dp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/grey"
+                    android:layout_margin="50dp" />
 
                 <!-- Forgot Password Button -->
                 <Button

@@ -3,6 +3,12 @@
 
     <style name="Theme.USPENROLME" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="buttonStyle">@style/CustomButtonStyle</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="colorPrimary">@color/blue</item>
+        <item name="colorPrimaryVariant">@color/darkgrey</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/blue</item>
     </style>
 
     <style name="CustomButtonStyle">
@@ -10,6 +16,5 @@
         <item name="android:textColor">@android:color/white</item>
         <item name="android:padding">10dp</item>
     </style>
-
 
 </resources>
