@@ -9,6 +9,7 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
+        maven("https://jitpack.io") // Add JitPack repository
     }
 }
 dependencyResolutionManagement {
@@ -16,9 +17,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven("https://jitpack.io") // Add JitPack repository
     }
 }
 
 rootProject.name = "USP ENROL ME"
 include(":app")
- 
