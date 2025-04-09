@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.USPENROLME" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
+    <style name="Theme.USPENROLME" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="buttonStyle">@style/CustomButtonStyle</item>
+    </style>
+
+    <style name="CustomButtonStyle">
+        <item name="android:background">@drawable/pay_btn</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:padding">10dp</item>
+    </style>
+
 
 </resources>
