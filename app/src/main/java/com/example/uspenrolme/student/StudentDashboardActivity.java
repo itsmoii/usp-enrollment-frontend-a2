@@ -1,6 +1,7 @@
 package com.example.uspenrolme.student;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,10 +30,13 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
@@ -59,6 +63,7 @@ public class StudentDashboardActivity  extends AppCompatActivity implements Frag
 
     SharedPreference sharedPreference;
 
+
     private TextView username, userID, userEmail;
 
     private CircleImageView userImage;
@@ -77,6 +82,7 @@ public class StudentDashboardActivity  extends AppCompatActivity implements Frag
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         sharedPreference = new SharedPreference(this);
+
 
         View headerView = navView.getHeaderView(0);
 
@@ -105,7 +111,7 @@ public class StudentDashboardActivity  extends AppCompatActivity implements Frag
     private void getUserProfile(){
         String url = "http://10.0.2.2:5000/api/profile";
         final String token = sharedPreference.getValue_string("token");
-
+        SharedPreferences user_pref = getSharedPreferences("user", MODE_PRIVATE);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -130,9 +136,18 @@ public class StudentDashboardActivity  extends AppCompatActivity implements Frag
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                Toast.makeText(StudentDashboardActivity.this, "Error: " + error.toString(), Toast.LENGTH_SHORT).show();
-                Log.d("ProfileDebug", "Retrieval error: " + error.toString());
+                NetworkResponse response = error.networkResponse;
+                if(error instanceof ServerError && response != null){
+                    Toast.makeText(StudentDashboardActivity.this, "Token check failed", Toast.LENGTH_SHORT).show();
+                }else if (error instanceof TimeoutError){
+                    Toast.makeText(StudentDashboardActivity.this, "Network timeout. Please Try again", Toast.LENGTH_SHORT).show();
+                }else if(error.networkResponse != null && error.networkResponse.statusCode == 403){
+                    user_pref.edit().remove("token").apply();
+                    startActivity(new Intent(StudentDashboardActivity.this, LoginActivity.class));
+                    finish();
+                } else {
+                    Toast.makeText(StudentDashboardActivity.this, "Network Error. Please check your connection", Toast.LENGTH_SHORT).show();
+                }
             }
         }){
             @Override

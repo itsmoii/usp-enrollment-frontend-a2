@@ -30,6 +30,8 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+
+
     }
     kotlinOptions {
         jvmTarget = "11"
@@ -65,6 +67,7 @@ dependencies {
     implementation("com.google.android.material:material:1.9.0")
     implementation("com.android.volley:volley:1.2.1")
     implementation("androidx.cardview:cardview:1.0.0")
+    implementation("com.stripe:stripe-android:21.8.0")
     implementation("de.hdodenhof:circleimageview:3.0.0")
     implementation("com.squareup.picasso:picasso:2.5.2")
     implementation("com.jjoe64:graphview:4.2.2")

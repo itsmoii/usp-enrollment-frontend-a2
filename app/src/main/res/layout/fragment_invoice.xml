@@ -47,7 +47,7 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_weight="3"
                 android:text="Course Code"
                 android:textSize="17sp"
                 android:textColor="@color/white"
@@ -55,7 +55,7 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="4"
+                android:layout_weight="5"
                 android:text="Course Name"
                 android:textColor="@color/white"
                 android:textSize="17sp"
@@ -63,7 +63,7 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_weight="3"
                 android:textColor="@color/white"
                 android:text="Level"
                 android:textSize="17sp"
@@ -87,7 +87,7 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_weight="3"
                 android:text="Amount"
                 android:textColor="@color/white"
                 android:textSize="17sp"
@@ -111,6 +111,7 @@
             <ProgressBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="60sp"
                 android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true"
                 android:indeterminate="true"
@@ -135,7 +136,10 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="20dp">
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="12dp">
 
             <View
                 android:layout_width="match_parent"
@@ -147,7 +151,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:text="Total payable amount: "
+                android:text="Total invoice amount: "
                 android:textSize="20sp"
                 android:fontFamily="@font/bebas"/>
 
@@ -155,7 +159,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=""
-                android:textColor="@color/black"
                 android:layout_marginTop="15dp"
                 android:textSize="20sp"
                 android:layout_alignParentRight="true"
@@ -171,12 +174,139 @@
 
         </RelativeLayout>
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="20dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="5dp">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total paid amount: "
+                android:textSize="20sp"
+                android:fontFamily="@font/bebas"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="20sp"
+                android:layout_alignParentRight="true"
+                android:id="@+id/payments_total"
+                android:fontFamily="@font/bebas"/>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginTop="30dp"
+                android:background="@color/grey" />
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="20dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="BALANCE: "
+                android:textSize="20sp"
+                android:fontFamily="@font/bebas"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:layout_alignParentRight="true"
+                android:id="@+id/balance_total"
+                android:fontFamily="@font/bebas"/>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginTop="30dp"
+                android:background="@color/darkgrey" />
+
+
+        </RelativeLayout>
+
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:id="@+id/payment_layout"
+            android:visibility="gone"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
+            android:padding="5dp">
 
 
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="IMPORTANT"
+                android:drawablePadding="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:fontFamily="@font/longreach"
+                android:textSize="20sp"
+                android:drawableLeft="@drawable/pin"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="10dp"
+                android:background="@color/darkgrey" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="YOU CAN MAKE PAYMENTS AT YOUR CAMPUS
+                CASHIER OR USE OUR PAYMENT PORTAL BELOW"
+                android:padding="10dp"/>
+
+
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/pay_btn"
+                android:padding="10dp"
+                android:paddingBottom="10dp"
+                android:layout_margin="16dp"
+                android:visibility="gone"
+                android:layout_centerInParent="true"
+                android:text="Pay Now"
+                android:textColor="@color/white"
+                android:gravity="center"
+                android:id="@+id/pay_btn"/>
+
+        </LinearLayout>
 
 
 
 
     </LinearLayout>
+
+
 </ScrollView>
