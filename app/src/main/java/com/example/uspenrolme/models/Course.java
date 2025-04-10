@@ -7,6 +7,7 @@ public class Course {
     private String mode;
     private String semester;
     private String preRequisite; // New field for prerequisites
+    private String grade; // New field for grade
     private boolean isSelected;
 
     // Constructor, getters, and setters
@@ -16,7 +17,8 @@ public class Course {
         this.campus = campus;
         this.mode = mode;
         this.semester = semester;
-        this.preRequisite = preRequisite; // Initialize the new field
+        this.preRequisite = preRequisite;
+        this.grade = null; // Initialize grade as null
         this.isSelected = false;
     }
 
@@ -66,6 +68,14 @@ public class Course {
 
     public void setPreRequisite(String preRequisite) {
         this.preRequisite = preRequisite;
+    }
+
+    public String getGrade() {
+        return grade;
+    }
+
+    public void setGrade(String grade) {
+        this.grade = grade;
     }
 
     public boolean isSelected() {
