@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@color/paleBlue"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/payment_date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="3"
+        android:text="Date"
+        android:textSize="15sp"
+        android:fontFamily="@font/monofonto"/>
+    <TextView
+        android:id="@+id/payment_amount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="3"
+        android:text="Amount"
+        android:textSize="15sp"
+        android:fontFamily="@font/monofonto"/>
+    <TextView
+        android:id="@+id/payment_method"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="3"
+        android:text="Method"
+        android:textSize="15sp"
+        android:fontFamily="@font/monofonto"/>
+
+
+</LinearLayout>

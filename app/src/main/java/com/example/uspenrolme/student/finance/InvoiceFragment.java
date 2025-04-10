@@ -153,7 +153,7 @@ public class InvoiceFragment extends Fragment {
 
         JSONObject body = new JSONObject();
         try {
-            int amountInCents = (int) (totalAmt * 100);
+            int amountInCents = (int) (totalBalance * 100);
             body.put("amount", amountInCents);
         } catch (JSONException e) {
             e.printStackTrace();

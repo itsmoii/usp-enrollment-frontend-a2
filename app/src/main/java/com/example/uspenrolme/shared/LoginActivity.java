@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -35,6 +37,7 @@ import com.example.uspenrolme.UtilityService.SharedPreference;
 import com.example.uspenrolme.UtilityService.UtilService;
 import com.example.uspenrolme.manager.ManagerDashboardAcitivity;
 import com.example.uspenrolme.student.StudentDashboardActivity;
+import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -71,6 +74,27 @@ public class LoginActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progress_bar);
         utilService = new UtilService();
         sharedPref = new SharedPreference(this);
+
+        TextInputLayout passwordInputLayout = findViewById(R.id.password_input_layout);
+        passwordInputLayout.setEndIconMode(TextInputLayout.END_ICON_CUSTOM);
+        passwordInputLayout.setEndIconDrawable(R.drawable.visibility_off);
+
+        passwordInputLayout.setEndIconOnClickListener(new View.OnClickListener() {
+            boolean isPasswordVisible = false;
+
+            @Override
+            public void onClick(View v) {
+                if (isPasswordVisible) {
+                    password_ET.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    passwordInputLayout.setEndIconDrawable(R.drawable.visibility_off);
+                } else {
+                    password_ET.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    passwordInputLayout.setEndIconDrawable(R.drawable.visibility_on);
+                }
+                isPasswordVisible = !isPasswordVisible;
+                password_ET.setSelection(password_ET.getText().length());
+            }
+        });
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
