@@ -1,14 +1,164 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:cardview="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".student.HomeFragment">
+    tools:context=".student.HomeFragment"
+    android:background="@drawable/bg3"
+    app:cardCornerRadius="16dp">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <!-- ScrollView to make content scrollable -->
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp">
 
-</FrameLayout>
+        <!-- LinearLayout to hold all content inside the ScrollView -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:spacing="8dp">
+
+            <!-- Welcome Message Text -->
+            <TextView
+                android:id="@+id/welcomeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:fontFamily="@font/bebas"
+                android:gravity="center"
+                android:text="Welcome to USP Student Online Services!"
+                android:textColor="@android:color/white"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                android:layout_gravity="center"/>
+
+            <!-- Insert your image here -->
+            <ImageView
+                android:id="@+id/welcomeMessage"
+                android:layout_width="383dp"
+                android:layout_height="180dp"
+                android:layout_gravity="center"
+                android:src="@drawable/message"
+                android:scaleType="centerInside"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/rounded_img"/>
+
+            <Button
+                android:id="@+id/registerButton"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/round_teal"
+                android:text="Register for your Courses"
+                android:textColor="@android:color/white" />
+
+            <!-- View Grades Button -->
+            <Button
+                android:id="@+id/gradesButton"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:text="View your Crades"
+                android:textColor="@android:color/white"
+                android:background="@color/teal_700"
+                android:layout_marginTop="8dp" />
+
+            <!-- View Finance Menu Button -->
+            <Button
+                android:id="@+id/financeButton"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:text="View your Finance menu"
+                android:textColor="@android:color/white"
+                android:background="@drawable/btn_bg"
+                android:layout_marginTop="8dp" />
+
+            <!-- Calendar Section (Optional) -->
+            <android.widget.CalendarView
+                android:id="@+id/calendarView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@color/white"/>
+
+            <!-- CardView for Moodle Message Section -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardBackgroundColor="@android:color/white"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Moodle Message"
+                        android:textColor="@android:color/black"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:layout_gravity="center"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Dear Students,\n\nPlease note that for now students will still continue to see their dropped courses on their Moodle dashboard.\n\nYour dropped course will be automatically deleted from your Moodle Dashboard when the add and drop course period closes. Please ignore Moodle notifications and e-mails from the courses that you have dropped.\n\nAn additional note that Moodle does not determine your registrations, as it only shows the course shells registered per semester. SOLS is the main platform for registrations and withdrawal. Once your application to drop a course from SOLS is approved, Moodle will update itself shortly afterwards or when the add and drop course period closes.\n\nSincerely,\nMoodle Support Team"
+                        android:textSize="16sp"
+                        android:textColor="@android:color/black"
+                        android:lineSpacingExtra="4dp"/>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- CardView for Programme Requirements Section -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardBackgroundColor="@android:color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Programme Requirements"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/black"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Please note that the 'My Programme Requirements' feature on the Student Online System (SOLS) is temporarily unavailable until further notice.\n\nFor a program audit, visit your nearest Student Services Centre or email contactus@usp.ac.fj.\n\nStudent Administrative Services"
+                        android:textSize="16sp"
+                        android:textColor="@android:color/black"
+                        android:lineSpacingExtra="4dp"/>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

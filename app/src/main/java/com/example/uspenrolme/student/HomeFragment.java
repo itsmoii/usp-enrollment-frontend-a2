@@ -1,14 +1,16 @@
 package com.example.uspenrolme.student;
 
+
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.example.uspenrolme.R;
+import com.example.uspenrolme.student.finance.FinanceMenu;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -16,6 +18,8 @@ import com.example.uspenrolme.R;
  * create an instance of this fragment.
  */
 public class HomeFragment extends Fragment {
+
+    private Button btnRegister, btnGrades, btnFinance;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -61,6 +65,28 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        //initialize buttons
+        btnRegister = view.findViewById(R.id.registerButton);
+        btnGrades = view.findViewById(R.id.gradesButton);
+        btnFinance = view.findViewById(R.id.financeButton);
+
+        //set but onClick listeners
+        btnRegister.setOnClickListener(v -> {
+            //nav to registration page
+            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content, new RegistrationFragment()).commit();
+        });
+
+        btnGrades.setOnClickListener(v -> {
+            //nav to grades page
+            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content, new GradesFragment()).commit();
+        });
+
+        btnFinance.setOnClickListener(v -> {
+            //nav to finance page
+            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content, new FinanceMenu()).commit();
+        });
+
+        return view;
     }
 }
