@@ -115,6 +115,7 @@ public class PrerequisiteFragment extends Fragment {
         if (studentId == null || studentId.isEmpty()) {
             Log.e("PrerequisiteFragment", "Error: Student ID is missing.");
             programTitleView.setText("Student ID Missing");
+            programTitleView.setTextColor(getResources().getColor(R.color.teal_700)); // Set color to teal
             return;
         }
     
@@ -126,14 +127,17 @@ public class PrerequisiteFragment extends Fragment {
                     try {
                         String programName = response.optString("program_name", "Unknown Program");
                         programTitleView.setText(programName);
+                        programTitleView.setTextColor(getResources().getColor(R.color.teal_700)); // Set color to teal
                     } catch (Exception e) {
                         e.printStackTrace();
                         programTitleView.setText("Program Name Not Available");
+                        programTitleView.setTextColor(getResources().getColor(R.color.teal_700)); // Set color to teal
                     }
                 },
                 error -> {
                     Log.e("PrerequisiteFragment", "Error fetching program name: " + error.getMessage());
                     programTitleView.setText("Program Name Not Available");
+                    programTitleView.setTextColor(getResources().getColor(R.color.teal_700)); // Set color to teal
                 });
     
         requestQueue.add(programRequest);

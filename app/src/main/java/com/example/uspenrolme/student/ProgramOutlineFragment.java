@@ -189,26 +189,33 @@ public class ProgramOutlineFragment extends Fragment {
 
     private void fetchCurrentlyRegisteredCourses(String studentId, List<Course> programCourses, Set<String> completedCourseCodes) {
         String url = "http://10.0.2.2:5000/api/active-registrations?studentId=" + studentId;
-
+    
+        Log.d("fetchCurrentlyRegisteredCourses", "Fetching currently registered courses from URL: " + url);
+    
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
                 response -> {
                     try {
                         Set<String> currentlyRegisteredCourses = new HashSet<>();
-                        for (int i = 0; i < response.length(); i++) {
-                            JSONObject obj = response.getJSONObject(i);
-                            currentlyRegisteredCourses.add(obj.getString("course_code"));
+                        if (response != null) {
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject obj = response.getJSONObject(i);
+                                currentlyRegisteredCourses.add(obj.getString("course_code"));
+                            }
                         }
-
+    
                         // Process and display data
                         Map<String, Map<String, List<String>>> groupedCourses = processCourses(programCourses, completedCourseCodes, currentlyRegisteredCourses);
                         displayProgramOutline(groupedCourses);
-
+    
                     } catch (JSONException e) {
                         Log.e("ProgramOutlineFragment", "Error parsing currently registered courses", e);
                     }
                 },
-                error -> handleError("currently registered courses", error));
-
+                error -> {
+                    Log.e("ProgramOutlineFragment", "Error fetching currently registered courses: " + error.getMessage());
+                    handleError("currently registered courses", error);
+                });
+    
         requestQueue.add(request);
     }
 
