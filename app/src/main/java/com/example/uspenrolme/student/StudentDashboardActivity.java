@@ -43,6 +43,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.uspenrolme.shared.LoginActivity;
 import com.example.uspenrolme.R;
 import com.example.uspenrolme.UtilityService.SharedPreference;
+import com.example.uspenrolme.student.applications.StudentApplicationsFragment;
 import com.example.uspenrolme.student.finance.FinanceMenu;
 import com.google.android.material.navigation.NavigationView;
 
@@ -219,6 +220,9 @@ public class StudentDashboardActivity  extends AppCompatActivity implements Frag
         }else if (itemId == R.id.action_programOutline){
             // **Change this line:**
             getSupportFragmentManager().beginTransaction().replace(R.id.content, new ProgramOutlineFragment()).commit();
+        }else if (itemId == R.id.action_applications){
+            // **Change this line:**
+            getSupportFragmentManager().beginTransaction().replace(R.id.content, new StudentApplicationsFragment()).commit();
         }
     }
 
