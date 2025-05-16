@@ -1,0 +1,51 @@
+package com.example.uspenrolme.student.applications;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+
+import androidx.fragment.app.Fragment;
+import com.example.uspenrolme.R;
+
+public class StudentApplicationsFragment extends Fragment {
+
+    Button trackApplicationsBtn;
+    Button notificationsBtn;
+    Button gradeRecheckBtn;
+    Button graduationApplicationsBtn;
+
+
+    public StudentApplicationsFragment() {
+        super(R.layout.fragment_applications);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view =  inflater.inflate(R.layout.fragment_applications, container, false);
+
+        trackApplicationsBtn = view.findViewById(R.id.track_application_btn);
+        notificationsBtn = view.findViewById(R.id.application_notification_btn);
+        graduationApplicationsBtn = view.findViewById(R.id.graduation_application_btn);
+        gradeRecheckBtn = view.findViewById(R.id.application_graderecheck_btn);
+
+
+        gradeRecheckBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openFragment(new ApplicationGradeReCheckFragment());
+            }
+        });
+        return view;
+    }
+    private void openFragment(Fragment fragment){
+
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.content, fragment)
+                .addToBackStack(null)
+                .commit();
+
+    }
+}
