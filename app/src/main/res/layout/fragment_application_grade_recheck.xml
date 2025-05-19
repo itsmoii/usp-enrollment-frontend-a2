@@ -1,0 +1,418 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".student.applications.ApplicationGradeReCheckFragment"
+    android:padding="16dp"
+    android:background="@android:color/white">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Title Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Grade Re-Check Application"
+                android:textSize="36sp"
+                android:fontFamily="@font/bebas"
+                android:textColor="@color/indigo"
+                android:textAllCaps="true"
+                android:paddingBottom="16dp" />
+
+            <!-- Declaration Section -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/light_gray">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="DECLARATION"
+                        android:textSize="24sp"
+                        android:fontFamily="@font/longreach"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="For the grades that have been released for each course, these have been verified, audited, and then approved by the School’s Board of Assessment Committee before being released to students. If you think there has been an error and/or you think the grade is not representative of the quality of your coursework and final exam, you can apply for a Grade Re-Check. This requires a payment of FJD $50."
+                        android:textColor="@color/gray"
+                        android:textSize="14sp"
+                        android:lineSpacingExtra="4dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="NOTE!"
+                        android:textSize="24sp"
+                        android:fontFamily="@font/longreach"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Ensure you have paid the FJD $50 at the USP Cashier. Take a picture of your payment reciept and upload it to this form. Also take note of your reciept number."
+                        android:textColor="@color/gray"
+                        android:textSize="14sp"
+                        android:lineSpacingExtra="4dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Message for New Students -->
+
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="4dp"
+                    app:cardBackgroundColor="@color/paleWhite">
+
+                    <LinearLayout
+                        android:id="@+id/new_student_message_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/new_student_message_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:text="Please note that you are a new student, hence, so far you have no completed courses for which you would require to apply for grade re-check."
+                        android:textSize="20sp"
+                        android:padding="10dp"
+                        android:layout_marginBottom="8dp"/>
+
+                    <Button
+                        android:id="@+id/go_back_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="BACK"
+                        android:backgroundTint="@color/indigo"
+                        android:textColor="@android:color/white"
+                        android:layout_marginBottom="16dp" />
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            <!-- Dropdown for Completed Courses -->
+            <TextView
+                android:id="@+id/spinner_instruction_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="Select the completed course below"
+                android:textSize="20sp"
+                android:padding="10dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:layout_marginBottom="8dp"/>
+
+            <!--instruction initially hidden-->
+            <TextView
+                android:id="@+id/grade_recheck_app_instruction_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:paddingTop="16dp"
+                android:text="Enter the details regarding your grade check application and submit."
+                android:textSize="20sp"
+                android:padding="10dp"
+                android:layout_marginBottom="8dp"/>
+
+            <Spinner
+                android:id="@+id/completed_courses_spinner"
+                android:paddingTop="16dp"
+                android:paddingBottom="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:layout_marginBottom="20dp"/>
+
+            <Button
+                android:id="@+id/continue_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Continue"
+                android:backgroundTint="@color/indigo"
+                android:textColor="@android:color/white"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Course info fields (hidden initially) -->
+            <LinearLayout
+                android:id="@+id/courseInfoLayout"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="4dp"
+                    app:cardBackgroundColor="@android:color/white">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Course Grade Infromation"
+                            android:textStyle="bold"
+                            android:textSize="20sp"
+                            android:textColor="#3F51B5"
+                            android:layout_marginBottom="16dp"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/courseCodeTextView"
+                            android:textStyle="bold"
+                            android:text="Course Code: "
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/courseNameTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:text="Course Name: "
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/gradeTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:text="Grade: "
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/courseTermTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:text="Term: "
+                            android:textSize="16sp" />
+
+                    </LinearLayout>
+
+
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Additional Details"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:textColor="#3F51B5"
+                    android:layout_marginBottom="8dp"
+                    android:paddingStart="8dp"
+                    android:paddingTop="8dp" />
+
+                <!-- Lecturer Name Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="@android:color/white">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:id="@+id/lecturerNameTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="10dp"
+                            android:text="Lecturer Name:"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="8dp" />
+
+                        <EditText
+                            android:id="@+id/lecturerNameEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Enter Course Lecturer Name"
+                            android:inputType="text"
+                            android:backgroundTint="@color/indigo"
+                            android:padding="10dp"
+                            />
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Reason Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="@android:color/white">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:id="@+id/reasonTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Reason:"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="8dp" />
+
+                        <EditText
+                            android:id="@+id/reasonEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="150dp"
+                            android:hint="Clearly explain the reason for applying for grade re-check."
+                            android:inputType="textMultiLine"
+                            android:backgroundTint="@color/indigo"
+                            android:gravity="top|start"
+                            android:padding="16dp"/>
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Reason Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="@android:color/white">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:id="@+id/recieptNumberTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Reciept Number:"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="8dp" />
+
+                        <EditText
+                            android:id="@+id/recieptNumberEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Enter the reciept number from your payment recipt from the USP Cashier."
+                            android:inputType="textMultiLine"
+                            android:backgroundTint="@color/indigo"
+                            android:gravity="top|start"
+                            android:padding="10dp"/>
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+
+
+                <Button
+                    android:id="@+id/submitRecheckButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Submit Application"
+                    android:backgroundTint="@color/indigo"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="24dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/successLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:gravity="center"
+                android:padding="24dp">
+
+                <ImageView
+                    android:id="@+id/successImage"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:src="@drawable/application_checkmark"
+                    android:layout_marginBottom="16dp"
+                    android:contentDescription="Success" />
+
+                <TextView
+                    android:id="@+id/successMessage1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Your Grade Re-Check Application has been submitted successfully!"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/indigo"
+                    android:layout_marginBottom="16dp" />
+
+                <TextView
+                    android:id="@+id/successMessage2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="You will be notified once the Grade Re-Check process is complete."
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/indigo"
+                    android:gravity="center"
+                    android:layout_marginBottom="16dp" />
+
+                <Button
+                    android:id="@+id/viewDetailsButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="View Application Details"
+                    android:backgroundTint="@color/indigo"
+                    android:textColor="@android:color/white" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
