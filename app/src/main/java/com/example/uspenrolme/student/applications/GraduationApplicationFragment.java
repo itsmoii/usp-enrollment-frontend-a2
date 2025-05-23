@@ -10,6 +10,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 import android.widget.CheckBox;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -71,6 +72,49 @@ public class GraduationApplicationFragment extends Fragment {
         submitBtn = view.findViewById(R.id.submit_graduation_btn);
 
         submitBtn.setOnClickListener(v -> submitGraduationApplication());
+
+        // Auto-fill personal details
+        fetchAndFillStudentProfile();
+    }
+
+    private void fetchAndFillStudentProfile() {
+        String token = sharedPreference.getValue_string("authToken");
+        String url = "http://10.0.2.2:5000/api/profile";
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+            response -> {
+                try {
+                    // Log the response to debug structure
+                    Log.d("GRAD_APP_PROFILE", "Profile response: " + response.toString());
+
+                    // If your backend returns { profile: { ... } }
+                    JSONObject profile = response.has("profile") ? response.getJSONObject("profile") : response;
+
+                    studentIdEditText.setText(profile.optString("student_id", ""));
+                    String fullName = profile.optString("first_name", "") + " " + profile.optString("last_name", "");
+                    nameEditText.setText(fullName.trim());
+                    emailEditText.setText(profile.optString("email", ""));
+                    telephoneEditText.setText(profile.optString("phone", ""));
+                    dobEditText.setText(profile.optString("dob", ""));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(requireContext(), "Failed to parse profile", Toast.LENGTH_SHORT).show();
+                }
+            },
+            error -> {
+                error.printStackTrace();
+                Toast.makeText(requireContext(), "Failed to fetch profile", Toast.LENGTH_SHORT).show();
+            }
+        ) {
+            @Override
+            public java.util.Map<String, String> getHeaders() {
+                java.util.Map<String, String> headers = new java.util.HashMap<>();
+                headers.put("Authorization", "Bearer " + token);
+                return headers;
+            }
+        };
+
+        requestQueue.add(request);
     }
 
     private void submitGraduationApplication() {
@@ -108,28 +152,32 @@ public class GraduationApplicationFragment extends Fragment {
 
         String token = sharedPreference.getValue_string("authToken");
 
-        String url = "http://10.0.2.2:5000/api/apply-graduation";
+        String url = "http://10.0.2.2:5000/api/applications/graduation";
         JSONObject data = new JSONObject();
+        JSONObject applicationData = new JSONObject();
         try {
+            // Put all application fields in applicationData
+            applicationData.put("name", name);
+            applicationData.put("email", email);
+            applicationData.put("telephone", telephone);
+            applicationData.put("dob", dob);
+            applicationData.put("postalAddress", postalAddress);
+            applicationData.put("programmeType", programmeType);
+            applicationData.put("programme", programme);
+            applicationData.put("major1", major1);
+            applicationData.put("major2", major2);
+            applicationData.put("minor", minor);
+            applicationData.put("signature", signature);
+            applicationData.put("date", date);
+
+            // Top-level object
             data.put("studentId", studentId);
-            data.put("name", name);
-            data.put("email", email);
-            data.put("telephone", telephone);
-            data.put("dob", dob);
-            data.put("postalAddress", postalAddress);
-            data.put("programmeType", programmeType);
-            data.put("programme", programme);
-            data.put("major1", major1);
-            data.put("major2", major2);
-            data.put("minor", minor);
-            data.put("signature", signature);
-            data.put("date", date);
+            data.put("applicationData", applicationData);
         } catch (JSONException e) {
             Toast.makeText(requireContext(), "Error creating request", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // --- AOP Logging: Log before sending request ---
         Logger.logEvent("GraduationApp", "Submitting graduation application for student: " + studentId);
 
         JsonObjectRequest request = new JsonObjectRequest(

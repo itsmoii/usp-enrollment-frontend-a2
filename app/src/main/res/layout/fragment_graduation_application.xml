@@ -13,12 +13,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Application for Completion of Programme"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:layout_gravity="center_horizontal"
-            android:paddingBottom="16dp"
-            android:textColor="@color/black"/>
+            android:text="Completion of Programme"
+            android:textSize="36sp"
+            android:fontFamily="@font/bebas"
+            android:textColor="@color/indigo"
+            android:textAllCaps="true"
+            android:padding="10dp" />
 
         <!-- Card: Personal Details -->
         <androidx.cardview.widget.CardView
@@ -279,9 +279,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="DECLARATION"
-                    android:textStyle="bold"
-                    android:textColor="@color/black"
-                    android:paddingBottom="8dp"/>
+                    android:textSize="24sp"
+                    android:fontFamily="@font/longreach"
+                    android:textColor="@color/teal"
+                    android:padding="20dp"
+                    android:textStyle="bold"/>
 
                 <CheckBox
                     android:id="@+id/declaration_checkbox"
