@@ -6,25 +6,32 @@
         android:checkableBehavior="single">
         <item
             android:title="Home"
-            android:id="@+id/action_home"/>
+            android:id="@+id/action_home"
+            android:icon="@drawable/home512"/>
         <item
             android:title="My Registrations"
-            android:id="@+id/action_registration"/>
+            android:id="@+id/action_registration"
+            android:icon="@drawable/registration"/>
         <item
             android:title="My Grades"
-            android:id="@+id/action_grades"/>
+            android:id="@+id/action_grades"
+            android:icon="@drawable/grades"/>
         <item
             android:title="My Finance Menu"
-            android:id="@+id/action_financeMenu"/>
+            android:id="@+id/action_financeMenu"
+            android:icon="@drawable/finance"/>
         <item
             android:title="My Program Outline"
-            android:id="@+id/action_programOutline"/>
+            android:id="@+id/action_programOutline"
+            android:icon="@drawable/program"/>
         <item
             android:title="My Applications"
-            android:id="@+id/action_applications"/>
+            android:id="@+id/action_applications"
+            android:icon="@drawable/applications"/>
         <item
             android:title="Logout"
-            android:id="@+id/action_logout"/>
+            android:id="@+id/action_logout"
+            android:icon="@drawable/logout"/>
 
     </group>
 
