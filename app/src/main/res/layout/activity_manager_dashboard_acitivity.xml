@@ -7,7 +7,7 @@
     android:id="@+id/manager_drawer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".manager.ManagerDashboardAcitivity">
+    tools:context=".manager.ManagerDashboardActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

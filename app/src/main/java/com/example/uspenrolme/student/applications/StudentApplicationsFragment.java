@@ -16,36 +16,32 @@ public class StudentApplicationsFragment extends Fragment {
     Button gradeRecheckBtn;
     Button graduationApplicationsBtn;
 
-
     public StudentApplicationsFragment() {
         super(R.layout.fragment_applications);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.fragment_applications, container, false);
+        View view = inflater.inflate(R.layout.fragment_applications, container, false);
 
         trackApplicationsBtn = view.findViewById(R.id.track_application_btn);
         notificationsBtn = view.findViewById(R.id.application_notification_btn);
+        //gradeRecheckBtn = view.findViewById(R.id.grade_recheck_btn);
         graduationApplicationsBtn = view.findViewById(R.id.graduation_application_btn);
-        gradeRecheckBtn = view.findViewById(R.id.application_graderecheck_btn);
 
+        // Example: open grade recheck fragment
+        //gradeRecheckBtn.setOnClickListener(v -> openFragment(new ApplicationGradeReCheckFragment()));
+        graduationApplicationsBtn.setOnClickListener(v -> openFragment(new GraduationApplicationFragment()));
+        // Add other button listeners as needed
 
-        gradeRecheckBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openFragment(new ApplicationGradeReCheckFragment());
-            }
-        });
         return view;
     }
-    private void openFragment(Fragment fragment){
 
-        getActivity().getSupportFragmentManager()
+    private void openFragment(Fragment fragment) {
+        requireActivity().getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.content, fragment)
                 .addToBackStack(null)
                 .commit();
-
     }
 }

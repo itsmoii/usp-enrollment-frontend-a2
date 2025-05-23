@@ -247,7 +247,7 @@ private void submitRecheckRequest() {
 
                 viewApplicationsBtn.setOnClickListener(v -> {
                     // Replace with your actual fragment transaction code
-                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content, new ViewApplicationsFragment()).commit();
+                    //getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content, new ViewApplicationsFragment()).commit();
 
                 });
             },
