@@ -41,7 +41,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ManagerDashboardAcitivity extends AppCompatActivity {
+public class ManagerDashboardActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
@@ -114,7 +114,7 @@ public class ManagerDashboardAcitivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
-                Toast.makeText(ManagerDashboardAcitivity.this, "Error: " + error.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ManagerDashboardActivity.this, "Error: " + error.toString(), Toast.LENGTH_SHORT).show();
                 Log.d("ProfileDebug", "Retrieval error: " + error.toString());
             }
         }){
@@ -173,7 +173,7 @@ public class ManagerDashboardAcitivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().replace(R.id.manager_content, new ManagerHomeFragment()).commit();
         }else if (itemId == R.id.action_manager_logout){
             sharedPreference.clear();
-            startActivity(new Intent(ManagerDashboardAcitivity.this, LoginActivity.class));
+            startActivity(new Intent(ManagerDashboardActivity.this, LoginActivity.class));
             finish();
         }else if (itemId == R.id.action_reg_panel){
             getSupportFragmentManager().beginTransaction().replace(R.id.manager_content, new RegistrationPanelFragment()).commit();

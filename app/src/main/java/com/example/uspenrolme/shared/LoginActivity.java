@@ -35,7 +35,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.uspenrolme.R;
 import com.example.uspenrolme.UtilityService.SharedPreference;
 import com.example.uspenrolme.UtilityService.UtilService;
-import com.example.uspenrolme.manager.ManagerDashboardAcitivity;
+import com.example.uspenrolme.manager.ManagerDashboardActivity;
 import com.example.uspenrolme.student.StudentDashboardActivity;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -148,7 +148,7 @@ public class LoginActivity extends AppCompatActivity {
                         if (role.equals("student")){
                             startActivity(new Intent(LoginActivity.this, StudentDashboardActivity.class));
                         }else if (role.equals("manager")){
-                            startActivity(new Intent(LoginActivity.this, ManagerDashboardAcitivity.class));
+                            startActivity(new Intent(LoginActivity.this, ManagerDashboardActivity.class));
                         }
 
 
@@ -265,7 +265,7 @@ public class LoginActivity extends AppCompatActivity {
                         if(role.equals("student")){
                             startActivity(new Intent(LoginActivity.this, StudentDashboardActivity.class));
                         }else if(role.equals("manager")){
-                            startActivity(new Intent(LoginActivity.this, ManagerDashboardAcitivity.class));
+                            startActivity(new Intent(LoginActivity.this, ManagerDashboardActivity.class));
                         }
 
                         finish();
