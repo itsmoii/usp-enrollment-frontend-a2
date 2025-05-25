@@ -1,6 +1,7 @@
 package com.example.uspenrolme.manager;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,16 +24,20 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.uspenrolme.shared.LoginActivity;
 import com.example.uspenrolme.R;
 import com.example.uspenrolme.UtilityService.SharedPreference;
+import com.example.uspenrolme.student.StudentDashboardActivity;
 import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONException;
@@ -41,7 +46,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ManagerDashboardAcitivity extends AppCompatActivity {
+public class ManagerDashboardActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
@@ -88,7 +93,8 @@ public class ManagerDashboardAcitivity extends AppCompatActivity {
     private void getUserProfile(){
         String url = "http://10.0.2.2:5000/api/manager-profile";
         final String token = sharedPreference.getValue_string("token");
-
+        SharedPreferences user_pref = getSharedPreferences("user", MODE_PRIVATE);
+        Log.d("ManagerDashboardActivity", "Token: " + token);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -113,9 +119,18 @@ public class ManagerDashboardAcitivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                Toast.makeText(ManagerDashboardAcitivity.this, "Error: " + error.toString(), Toast.LENGTH_SHORT).show();
-                Log.d("ProfileDebug", "Retrieval error: " + error.toString());
+                NetworkResponse response = error.networkResponse;
+                if(error instanceof ServerError && response != null){
+                    Toast.makeText(ManagerDashboardActivity.this, "Token check failed", Toast.LENGTH_SHORT).show();
+                }else if (error instanceof TimeoutError){
+                    Toast.makeText(ManagerDashboardActivity.this, "Network timeout. Please Try again", Toast.LENGTH_SHORT).show();
+                }else if(error.networkResponse != null && error.networkResponse.statusCode == 403){
+                    user_pref.edit().remove("token").apply();
+                    startActivity(new Intent(ManagerDashboardActivity.this, LoginActivity.class));
+                    finish();
+                } else {
+                    Toast.makeText(ManagerDashboardActivity.this, "Network Error. Please check your connection", Toast.LENGTH_SHORT).show();
+                }
             }
         }){
             @Override
@@ -173,7 +188,7 @@ public class ManagerDashboardAcitivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().replace(R.id.manager_content, new ManagerHomeFragment()).commit();
         }else if (itemId == R.id.action_manager_logout){
             sharedPreference.clear();
-            startActivity(new Intent(ManagerDashboardAcitivity.this, LoginActivity.class));
+            startActivity(new Intent(ManagerDashboardActivity.this, LoginActivity.class));
             finish();
         }else if (itemId == R.id.action_reg_panel){
             getSupportFragmentManager().beginTransaction().replace(R.id.manager_content, new RegistrationPanelFragment()).commit();

@@ -72,6 +72,8 @@ public class GradesFragment extends Fragment {
                 Request.Method.GET, gradesUrl, null,
                 this::processGradesResponse,
                 error -> Log.e("GradesFragment", "Error fetching grades", error)
+
+
         );
 
         requestQueue.add(gradesRequest);
