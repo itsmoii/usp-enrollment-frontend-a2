@@ -43,7 +43,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Track Applications"
+                        android:text="Special Exam"
                         android:textSize="30sp"
                         android:fontFamily="@font/longreach"
                         android:padding="20dp"/>
@@ -51,10 +51,10 @@
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Track and view status of your submitted applications"
+                        android:text="Apply for Compassioante Pass / Aegrotat Pass / Speacial Exam"
                         android:textSize="12dp"
                         android:padding="20dp"
-                        android:id="@+id/track_application_btn"
+                        android:id="@+id/compassionate_form_btn"
                         android:layout_alignParentBottom="true"
                         android:background="#00000000"/>
 
@@ -121,7 +121,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="STUDENT FORMS"
+                        android:text="GRADUATION"
                         android:textSize="30sp"
                         android:fontFamily="@font/longreach"
                         android:padding="20dp"/>
@@ -129,10 +129,10 @@
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Access Student Forms here"
+                        android:text="APPLY FOR GRADUATION HERE"
                         android:textSize="12dp"
                         android:padding="20dp"
-                        android:id="@+id/student_forms_btn"
+                        android:id="@+id/graduation_form_btn"
                         android:layout_alignParentBottom="true"
                         android:background="#00000000"/>
                 </RelativeLayout>
@@ -140,10 +140,9 @@
                 <ImageView
                     android:layout_width="150dp"
                     android:layout_height="110dp"
-                    android:src="@drawable/checklist"
+                    android:src="@drawable/application_graduations_application_icon"
                     android:layout_marginTop="-5dp"
                     android:layout_alignParentRight="true"/>
-
             </RelativeLayout>
 
             <RelativeLayout

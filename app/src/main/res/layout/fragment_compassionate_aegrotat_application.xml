@@ -14,8 +14,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Completion of Programme"
-            android:textSize="36sp"
+            android:text="Compassionate / Aegrotat / Special Exam Application"
+            android:textSize="32sp"
             android:fontFamily="@font/bebas"
             android:textColor="@color/indigo"
             android:textAllCaps="true"
@@ -43,18 +43,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="SECTION A: PERSONAL DETAILS"
-                    android:textSize="24sp"
+                    android:textSize="20sp"
                     android:fontFamily="@font/longreach"
                     android:textColor="@color/teal"
-                    android:padding="20dp"
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Student ID Number *"
-                    android:layout_marginTop="8dp">
+                    android:hint="Student ID Number *">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/student_id_edittext"
                         android:layout_width="match_parent"
@@ -124,7 +122,7 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Card: Programme Details -->
+        <!-- Card: Missed Exam Details -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -145,92 +143,32 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Programme you are completing?"
-                    android:textSize="24sp"
+                    android:text="SECTION B: MISSED EXAM DETAILS"
+                    android:textSize="20sp"
                     android:fontFamily="@font/longreach"
                     android:textColor="@color/teal"
-                    android:padding="20dp"
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp" />
 
-                <RadioGroup
-                    android:id="@+id/programme_type_radiogroup"
+                <LinearLayout
+                    android:id="@+id/course_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingBottom="8dp"
-                    android:layout_marginTop="8dp">
+                    android:layout_marginBottom="8dp" />
 
-                    <RadioButton
-                        android:id="@+id/radio_pacific_tafe"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Pacific TAFE"/>
-
-                    <RadioButton
-                        android:id="@+id/radio_undergraduate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Undergraduate"/>
-
-                    <RadioButton
-                        android:id="@+id/radio_postgraduate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Postgraduate"/>
-                </RadioGroup>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
+                <Button
+                    android:id="@+id/add_course_btn"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="Programme *"
-                    android:layout_marginTop="8dp">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/programme_edittext"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="text"/>
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Major 1 *"
-                    android:layout_marginTop="8dp">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/major1_edittext"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="text"/>
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Major 2 (Enter N/A if not applicable)"
-                    android:layout_marginTop="8dp">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/major2_edittext"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="text"/>
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Minor (Enter N/A if not applicable)"
-                    android:layout_marginTop="8dp">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/minor_edittext"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="text"/>
-                </com.google.android.material.textfield.TextInputLayout>
+                    android:text="Add Another Course"
+                    android:layout_gravity="end"
+                    android:layout_marginBottom="8dp"
+                    android:enabled="true"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Card: Graduation Ceremony -->
+        <!-- Card: Application Details (Section C) -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -251,27 +189,84 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="SECTION B: GRADUATION CEREMONY"
-                    android:textSize="24sp"
+                    android:text="SECTION C: APPLICATION DETAILS"
+                    android:textSize="20sp"
                     android:fontFamily="@font/longreach"
                     android:textColor="@color/teal"
-                    android:padding="20dp"
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Laucala Campus\nApplications for this ceremony is open and will close on 4th of July 2025"
-                    android:textColor="#B71C1C"
-                    android:paddingBottom="4dp"/>
+                    android:text="Supporting Certified Documents"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="4dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tonga Campus\nApplications for this ceremony is open and will close on 1st of August 2025"
-                    android:textColor="#B71C1C"
-                    android:paddingBottom="8dp"/>
+                    android:text="Aegrotat Pass (attach a USP approved medical certificate)\nCompassionate Pass (attach a certified copy of the death certificate or letter from employer)\nSpecial Examination (attach relevant documentation)"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Please state below your reasons for making this application and attach all necessary documents."
+                    android:textStyle="bold"
+                    android:layout_marginBottom="4dp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Reason for Application *"
+                    android:layout_marginTop="4dp">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/reason_edittext"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textMultiLine"
+                        android:minLines="3"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Documentary Evidence (describe or attach separately)"
+                    android:layout_marginTop="8dp">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/evidence_edittext"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textMultiLine"
+                        android:minLines="2"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Attach Supporting Documents *"
+                    android:textStyle="bold"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="4dp" />
+
+                <!-- Placeholder for file upload (implement with a button or custom view as needed) -->
+                <Button
+                    android:id="@+id/attach_documents_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Attach Files (Max 7, 3MB each)"
+                    android:drawableLeft="@android:drawable/ic_menu_upload"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/attached_files_textview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="No files attached"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="8dp" />
+
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -296,17 +291,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="DECLARATION"
-                    android:textSize="24sp"
+                    android:textSize="20sp"
                     android:fontFamily="@font/longreach"
                     android:textColor="@color/teal"
-                    android:padding="20dp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
 
                 <CheckBox
                     android:id="@+id/declaration_checkbox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="I have read the above information"
+                    android:text="I declare that the information provided is true and correct."
                     android:paddingBottom="8dp"
                     android:layout_marginTop="8dp"/>
 
@@ -335,7 +330,7 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <Button
-                    android:id="@+id/submit_graduation_btn"
+                    android:id="@+id/submit_compassionate_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Submit Application"

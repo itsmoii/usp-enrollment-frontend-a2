@@ -4,4 +4,11 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="drawer_open">navigation_drawer_open</string>
     <string name="drawer_close">navigation_drawer_close</string>
+
+    <string-array name="applying_for_options">
+        <item>Select</item>
+        <item>Aegrotat Pass</item>
+        <item>Compassionate Pass</item>
+        <item>Special Exam</item>
+    </string-array>
 </resources>
