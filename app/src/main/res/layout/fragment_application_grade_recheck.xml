@@ -54,7 +54,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="For the grades that have been released for each course, these have been verified, audited, and then approved by the School’s Board of Assessment Committee before being released to students. If you think there has been an error and/or you think the grade is not representative of the quality of your coursework and final exam, you can apply for a Grade Re-Check. This requires a payment of FJD $50."
+                        android:text="For the grades that have been released for each course, these have been verified, audited, and then approved by the School’s Board of Assessment Committee before being released to students. If you think there has been an error and/or you think the grade is not representative of the quality of your coursework and final exam, you can apply for a Grade Re-Check. You are only eligible ot apply for Grade Re-Check for completed courses from the past two years with grades of B and below. This requires a payment of FJD $50."
                         android:textColor="@color/gray"
                         android:textSize="14sp"
                         android:lineSpacingExtra="4dp" />
@@ -101,7 +101,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:textStyle="bold"
-                        android:text="Please note that you are a new student, hence, so far you have no completed courses for which you would require to apply for grade re-check."
+                        android:text="You have no completed courses from the last two years. Please note that you can only apply for Grade Re-Check for the courses that you have completed within the last two years. Our system currently shows no record of completed course within the past two years."
                         android:textSize="20sp"
                         android:padding="10dp"
                         android:layout_marginBottom="8dp"/>
@@ -124,7 +124,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:text="Select the completed course below"
+                android:text="Select the completed course below (ONLY showing completed courses from the past two years, with grades of B and lower)"
                 android:textSize="20sp"
                 android:padding="10dp"
                 android:paddingTop="10dp"
