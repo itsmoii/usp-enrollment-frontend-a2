@@ -131,6 +131,10 @@ public class ManagerDashboardActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(ManagerDashboardActivity.this, "Network Error. Please check your connection", Toast.LENGTH_SHORT).show();
                 }
+                error.printStackTrace();
+                Toast.makeText(ManagerDashboardActivity.this, "Error: " + error.toString(), Toast.LENGTH_SHORT).show();
+                Log.d("ProfileDebug", "Retrieval error: " + error.toString());
+
             }
         }){
             @Override

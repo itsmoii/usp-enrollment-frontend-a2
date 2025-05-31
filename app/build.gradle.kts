@@ -79,4 +79,5 @@ dependencies {
     }
     implementation("androidx.recyclerview:recyclerview:1.3.1")
     implementation("com.github.PhilJay:MPAndroidChart:3.1.0") // Corrected dependency
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
 }

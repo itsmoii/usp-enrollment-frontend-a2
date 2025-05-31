@@ -7,4 +7,12 @@
     <string name="hold_message">Please select the services students on fee hold <b>will not</b> be able to access</string>
     <string name="active_hold">Please make payments at your campus cashier or pay now through the invoice section in your finance menu</string>
 
+
+    <string-array name="applying_for_options">
+        <item>Select</item>
+        <item>Aegrotat Pass</item>
+        <item>Compassionate Pass</item>
+        <item>Special Exam</item>
+    </string-array>
+
 </resources>
