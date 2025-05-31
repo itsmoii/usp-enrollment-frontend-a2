@@ -22,4 +22,6 @@
     <color name="primary_text">#212121</color>
     <color name="course_block_bg">#3F51B5</color>
     <color name="course_block_stroke">#303F9F</color>
+    <color name="primaryColor">#1976D2</color>
+
 </resources>

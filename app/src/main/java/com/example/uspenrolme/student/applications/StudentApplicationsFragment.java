@@ -30,6 +30,8 @@ public class StudentApplicationsFragment extends Fragment {
         //gradeRecheckBtn = view.findViewById(R.id.grade_recheck_btn);
         studentFormsBtn = view.findViewById(R.id.student_forms_btn);
 
+        trackApplicationsBtn.setOnClickListener(v -> openFragment(new TrackApplicationsFragment()));
+        
         // Example: open grade recheck fragment
         //gradeRecheckBtn.setOnClickListener(v -> openFragment(new ApplicationGradeReCheckFragment()));
         studentFormsBtn.setOnClickListener(v -> openFragment(new StudentFormsFragment()));

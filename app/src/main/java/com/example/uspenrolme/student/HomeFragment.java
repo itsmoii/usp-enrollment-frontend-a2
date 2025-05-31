@@ -1,6 +1,5 @@
 package com.example.uspenrolme.student;
 
-
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -11,6 +10,7 @@ import android.widget.Button;
 
 import com.example.uspenrolme.R;
 import com.example.uspenrolme.student.finance.FinanceMenu;
+import com.google.android.material.card.MaterialCardView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -61,30 +61,29 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    private MaterialCardView cardRegistration, cardGrades, cardFinance;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        //initialize buttons
-        btnRegister = view.findViewById(R.id.registerButton);
-        btnGrades = view.findViewById(R.id.gradesButton);
-        btnFinance = view.findViewById(R.id.financeButton);
 
-        //set but onClick listeners
-        btnRegister.setOnClickListener(v -> {
-            //nav to registration page
-            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content, new RegistrationFragment()).commit();
+        // Initialize cards
+        cardRegistration = view.findViewById(R.id.cardRegistration);
+        cardGrades = view.findViewById(R.id.cardGrades);
+        cardFinance = view.findViewById(R.id.cardFinance);
+
+        cardRegistration.setOnClickListener(v -> {
+            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new RegistrationFragment()).commit();
         });
 
-        btnGrades.setOnClickListener(v -> {
-            //nav to grades page
-            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content, new GradesFragment()).commit();
+        cardGrades.setOnClickListener(v -> {
+            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new GradesFragment()).commit();
         });
 
-        btnFinance.setOnClickListener(v -> {
-            //nav to finance page
-            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content, new FinanceMenu()).commit();
+        cardFinance.setOnClickListener(v -> {
+            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FinanceMenu()).commit();
         });
 
         return view;
