@@ -23,7 +23,10 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.uspenrolme.R;
+import com.example.uspenrolme.UtilityService.HoldUtils;
 import com.example.uspenrolme.UtilityService.SharedPreference;
+import com.example.uspenrolme.shared.ErrorFragment;
+import com.example.uspenrolme.student.CoursesFragment;
 import com.example.uspenrolme.student.finance.FinanceMenu;
 
 import org.json.JSONArray;
@@ -82,19 +85,27 @@ public class ApplicationGradeReCheckFragment extends Fragment{
 
         newStudentMessageLayout.setVisibility(View.GONE);
         // Fetch completed courses
-        fetchCompletedCourses();
 
-        // Set onClickListener for Continue button
-        continueBtn.setOnClickListener(v -> {
-            Log.d("GradeReCheck", "Continue button clicked");
-            Toast.makeText(requireContext(), "Loading course details...", Toast.LENGTH_SHORT).show();
-            showCourseInfo();
+        String token = sharedPreference.getValue_string("token");
+        HoldUtils.checkHold(requireContext(), token, "recheck", isBlocked -> {
+            if(isBlocked){
+                showHoldPage();
+            } else{
+                fetchCompletedCourses();
+
+                // Set onClickListener for Continue button
+                continueBtn.setOnClickListener(v -> {
+                    Log.d("GradeReCheck", "Continue button clicked");
+                    Toast.makeText(requireContext(), "Loading course details...", Toast.LENGTH_SHORT).show();
+                    showCourseInfo();
+                });
+
+                succesLayout.setVisibility(View.GONE);
+                gradeRecheckInstructionTextView.setVisibility(View.GONE);
+                // Set onClickListener for Submit Recheck button
+                submitRecheckBtn.setOnClickListener(v -> submitRecheckRequest());
+            }
         });
-
-        succesLayout.setVisibility(View.GONE);
-        gradeRecheckInstructionTextView.setVisibility(View.GONE);
-        // Set onClickListener for Submit Recheck button
-        submitRecheckBtn.setOnClickListener(v -> submitRecheckRequest());
     }
 
     private void fetchCompletedCourses() {
@@ -267,5 +278,13 @@ private void submitRecheckRequest() {
 
     requestQueue.add(request);
 }
+
+    private void showHoldPage(){
+        Log.d("YourFragment", "Showing hold page now...");
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.content, new ErrorFragment())
+                .commit();
+    }
 
 }

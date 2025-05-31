@@ -26,7 +26,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.uspenrolme.R;
+import com.example.uspenrolme.UtilityService.HoldUtils;
 import com.example.uspenrolme.UtilityService.SharedPreference;
+import com.example.uspenrolme.shared.ErrorFragment;
 
 
 import org.json.JSONArray;
@@ -61,7 +63,17 @@ public class GradesFragment extends Fragment {
         requestQueue = Volley.newRequestQueue(requireContext());
         gradesTable = view.findViewById(R.id.gradesTable);
 
-        fetchGradesData();
+        String token = sharedPref.getValue_string("token");
+
+        HoldUtils.checkHold(requireContext(), token, "grades", isBlocked -> {
+            if(isBlocked){
+                showHoldPage();
+            } else{
+                fetchGradesData();
+            }
+        });
+
+
     }
 
     private void fetchGradesData() {
@@ -72,6 +84,8 @@ public class GradesFragment extends Fragment {
                 Request.Method.GET, gradesUrl, null,
                 this::processGradesResponse,
                 error -> Log.e("GradesFragment", "Error fetching grades", error)
+
+
         );
 
         requestQueue.add(gradesRequest);
@@ -250,5 +264,12 @@ public class GradesFragment extends Fragment {
         public String getCampus() { return campus; }
         public String getMode() { return mode; }
         public String getGrade() { return grade; }
+    }
+    private void showHoldPage(){
+        Log.d("YourFragment", "Showing hold page now...");
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.content, new ErrorFragment())
+                .commit();
     }
 }

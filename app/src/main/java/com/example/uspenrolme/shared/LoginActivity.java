@@ -160,6 +160,7 @@ public class LoginActivity extends AppCompatActivity {
                     progressBar.setVisibility(View.GONE);
 
                 }
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -283,12 +284,14 @@ public class LoginActivity extends AppCompatActivity {
 
                 }
 
+
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 NetworkResponse response = error.networkResponse;
                 if(error instanceof ServerError && response != null){
+                    Log.e("TokenCheck", "ServerError Status Code: " + response.statusCode + ", Body: " + new String(response.data));
                     Toast.makeText(LoginActivity.this, "Token check failed", Toast.LENGTH_SHORT).show();
                 }else if (error instanceof TimeoutError){
                     Toast.makeText(LoginActivity.this, "Network timeout. Please Try again", Toast.LENGTH_SHORT).show();

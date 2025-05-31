@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-   <!-- filepath: c:\Users\slade\Downloads\CS415\Assign2\usp-enrollment-frontend-a2\app\src\main\res\values\themes.xml -->
     <style name="Theme.USPENROLME" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="buttonStyle">@style/CustomButtonStyle</item>
         <item name="windowActionBar">false</item>

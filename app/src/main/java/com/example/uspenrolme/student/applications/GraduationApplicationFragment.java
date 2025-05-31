@@ -21,8 +21,10 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.uspenrolme.R;
+import com.example.uspenrolme.UtilityService.HoldUtils;
 import com.example.uspenrolme.UtilityService.SharedPreference;
 import com.example.uspenrolme.UtilityService.Logger;
+import com.example.uspenrolme.shared.ErrorFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -71,10 +73,19 @@ public class GraduationApplicationFragment extends Fragment {
 
         submitBtn = view.findViewById(R.id.submit_graduation_btn);
 
-        submitBtn.setOnClickListener(v -> submitGraduationApplication());
 
-        // Auto-fill personal details
-        fetchAndFillStudentProfile();
+
+        String token = sharedPreference.getValue_string("token");
+        HoldUtils.checkHold(requireContext(), token, "graduation", isBlocked -> {
+            if(isBlocked){
+                showHoldPage();
+            } else{
+                submitBtn.setOnClickListener(v -> submitGraduationApplication());
+
+                // Auto-fill personal details
+                fetchAndFillStudentProfile();
+            }
+        });
     }
 
     private void fetchAndFillStudentProfile() {
@@ -209,5 +220,13 @@ public class GraduationApplicationFragment extends Fragment {
     private void sendGraduationEmailNotification(String studentId) {
         // Simulate sending email notification and log it (AOP)
         Logger.logEvent("Notification", "Email notification sent for graduation application: student=" + studentId);
+    }
+
+    private void showHoldPage(){
+        Log.d("YourFragment", "Showing hold page now...");
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.content, new ErrorFragment())
+                .commit();
     }
 }

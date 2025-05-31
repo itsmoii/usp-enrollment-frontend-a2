@@ -2,6 +2,14 @@
 <project version="4">
   <component name="deploymentTargetSelector">
     <selectionStates>
+<<<<<<< HEAD
+      <SelectionState runConfigName="app">
+        <option name="selectionMode" value="DROPDOWN" />
+        <DropdownSelection timestamp="2025-05-31T14:37:45.387934800Z">
+          <Target type="DEFAULT_BOOT">
+            <handle>
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\priya\.android\avd\Pixel_9_Pro_XL.avd" />
+=======
       <SelectionState runConfigName="USP ENROL">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
@@ -11,6 +19,7 @@
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\slade\.android\avd\Pixel_9_Pro_XL.avd" />
+>>>>>>> bf2d6151e56f27bab840c48948df97338ecceb7e
             </handle>
           </Target>
         </DropdownSelection>

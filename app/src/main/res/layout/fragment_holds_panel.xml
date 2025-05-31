@@ -1,14 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".manager.HoldsPanelFragment">
+    tools:context=".manager.HoldsPanelFragment"
+    android:background="@color/paleWhite">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:orientation="vertical">
 
-</FrameLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize">
+
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/back_icon"
+                android:id="@+id/holds_backBtn"
+                android:padding="10dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"/>
+        </RelativeLayout>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MANAGE HOLDS"
+            android:textSize="36sp"
+            android:fontFamily="@font/bebas"
+            android:textColor="@color/indigo"
+            android:textAllCaps="true"
+            android:padding="10dp"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:id="@+id/hold_layout"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
+            android:padding="5dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/hold_message"
+                android:drawablePadding="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:fontFamily="@font/monofonto"
+                android:textSize="20dp"
+                android:layout_marginBottom="20dp"
+                android:drawableLeft="@drawable/guidelines"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="10dp"
+                android:background="@color/darkgrey" />
+
+        </LinearLayout>
+
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/hold_registration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="Course registration"
+            android:fontFamily="@font/bebas"
+            android:textSize="20sp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"/>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/hold_grades"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="View grades"
+            android:fontFamily="@font/bebas"
+            android:textSize="20sp"
+            android:layout_margin="10dp"/>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/hold_audit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="View program audit"
+            android:fontFamily="@font/bebas"
+            android:textSize="20sp"
+            android:layout_margin="10dp"/>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/hold_recheck"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="Apply for grade recheck"
+            android:fontFamily="@font/bebas"
+            android:textSize="20sp"
+            android:layout_margin="10dp"/>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/hold_graduation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="Apply for graduation"
+            android:fontFamily="@font/bebas"
+            android:textSize="20sp"
+            android:layout_margin="10dp"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="250dp"
+                android:layout_height="50dp"
+                android:background="@drawable/hold_btn"
+                android:padding="10dp"
+                android:paddingBottom="10dp"
+                android:layout_margin="16dp"
+                android:layout_centerInParent="true"
+                android:text="Apply Hold"
+                android:textColor="@color/white"
+                android:gravity="center"
+                android:id="@+id/applyhold_btn"/>
+
+        </RelativeLayout>
+
+
+
+    </LinearLayout>
+
+
+</ScrollView>

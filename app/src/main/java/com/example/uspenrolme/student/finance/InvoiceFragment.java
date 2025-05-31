@@ -181,6 +181,7 @@ public class InvoiceFragment extends Fragment {
                     throw new RuntimeException(e);
                 }
 
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -307,6 +308,7 @@ public class InvoiceFragment extends Fragment {
                     progressBar.setVisibility(View.GONE);
 
                 }
+
             }
         }, new Response.ErrorListener() {
             @Override
