@@ -1,6 +1,7 @@
 package com.example.uspenrolme.student;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.app.AlertDialog;
+
+import com.example.uspenrolme.UtilityService.HoldUtils;
+import com.example.uspenrolme.shared.ErrorFragment;
 import com.google.android.material.snackbar.Snackbar;
 
 import com.android.volley.AuthFailureError;
@@ -78,22 +82,30 @@ public class RegistrationFragment extends Fragment {
         droppedRegistrationAdapter = new RegistrationAdapter(new ArrayList<>(), this::showCourseDetailsDialog);
         droppedRegistrationRecyclerView.setAdapter(droppedRegistrationAdapter);
 
-        // Load data
-        loadProfileData();
-        progressBar.setVisibility(View.VISIBLE);
-        loadActiveRegistrations();
-        loadDroppedRegistrations();
-        progressBar.setVisibility(View.GONE);
+        String token = sharedPref.getValue_string("token");
 
-        // Set click listener for Add Course button
-        addCourseButton.setOnClickListener(v -> {
-            // Replace the current fragment with CoursesFragment
-            CoursesFragment coursesFragment = new CoursesFragment();
-            requireActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.content, coursesFragment)
-                    .addToBackStack(null)
-                    .commit();
+        HoldUtils.checkHold(requireContext(), token, "registration", isBlocked -> {
+            if(isBlocked){
+                showHoldPage();
+            } else{
+                // Load data
+                loadProfileData();
+                progressBar.setVisibility(View.VISIBLE);
+                loadActiveRegistrations();
+                loadDroppedRegistrations();
+                progressBar.setVisibility(View.GONE);
+
+                // Set click listener for Add Course button
+                addCourseButton.setOnClickListener(v -> {
+                    // Replace the current fragment with CoursesFragment
+                    CoursesFragment coursesFragment = new CoursesFragment();
+                    requireActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.content, coursesFragment)
+                            .addToBackStack(null)
+                            .commit();
+                });
+            }
         });
 
         return view;
@@ -356,6 +368,14 @@ public class RegistrationFragment extends Fragment {
                 .beginTransaction()
                 .detach(this)
                 .attach(this)
+                .commit();
+    }
+
+    private void showHoldPage(){
+        Log.d("YourFragment", "Showing hold page now...");
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.content, new ErrorFragment())
                 .commit();
     }
 }

@@ -116,6 +116,7 @@ public class HoldsPanelFragment extends Fragment {
 
                 }
                 Toast.makeText(getActivity(), "Rules loaded!", Toast.LENGTH_SHORT).show();
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -173,6 +174,7 @@ public class HoldsPanelFragment extends Fragment {
             @Override
             public void onResponse(JSONObject response) {
                 Toast.makeText(getActivity(), "Rules updated!", Toast.LENGTH_SHORT).show();
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -215,6 +217,7 @@ public class HoldsPanelFragment extends Fragment {
             @Override
             public void onResponse(JSONObject response) {
                 Toast.makeText(getActivity(), "Hold applied", Toast.LENGTH_SHORT).show();
+
             }
         }, new Response.ErrorListener() {
             @Override

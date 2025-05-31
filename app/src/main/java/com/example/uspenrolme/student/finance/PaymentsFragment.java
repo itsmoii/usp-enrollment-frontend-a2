@@ -144,6 +144,7 @@ public class PaymentsFragment extends Fragment {
                     progressBar.setVisibility(View.GONE);
 
                 }
+
             }
         }, new Response.ErrorListener() {
             @Override

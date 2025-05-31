@@ -20,8 +20,10 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import android.graphics.Typeface;
 import com.example.uspenrolme.R;
+import com.example.uspenrolme.UtilityService.HoldUtils;
 import com.example.uspenrolme.models.Course;
 import com.example.uspenrolme.UtilityService.SharedPreference;
+import com.example.uspenrolme.shared.ErrorFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,14 +57,24 @@ public class ProgramOutlineFragment extends Fragment {
         sharedPref = new SharedPreference(requireContext());
         requestQueue = Volley.newRequestQueue(requireContext());
 
-        // Fetch and display the student's program name
-        fetchProgramName();
+        String token = sharedPref.getValue_string("token");
 
-        // Fetch and display the student's profile
-        fetchStudentProfile(view);
+        HoldUtils.checkHold(requireContext(), token, "audit", isBlocked -> {
+            if(isBlocked){
+                showHoldPage();
+            } else{
 
-        // Fetch and process data
-        fetchProgramOutlineData();
+                // Fetch and display the student's program name
+                fetchProgramName();
+
+                // Fetch and display the student's profile
+                fetchStudentProfile(view);
+
+                // Fetch and process data
+                fetchProgramOutlineData();
+
+            }
+        });
 
         return view;
     }
@@ -71,7 +83,7 @@ public class ProgramOutlineFragment extends Fragment {
         String studentId = sharedPref.getValue_string("userID");
         String token = sharedPref.getValue_string("token"); // Retrieve the token
         String url = "http://10.0.2.2:5000/api/profile";
-    
+
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {
                     Log.d("fetchStudentProfile", "Response: " + response.toString());
@@ -79,14 +91,14 @@ public class ProgramOutlineFragment extends Fragment {
                         JSONObject userObj = response.getJSONObject("user");
                         JSONObject dataObj = userObj.getJSONObject("data"); // Adjusted to match the correct structure
                         JSONObject studentProfile = dataObj.getJSONObject("studentProfile");
-    
+
                         TextView studentIdTextView = view.findViewById(R.id.studentIdTextView);
                         TextView studentNameTextView = view.findViewById(R.id.studentNameTextView);
                         TextView emailTextView = view.findViewById(R.id.emailTextView);
-    
+
                         studentIdTextView.setText(studentProfile.optString("student_id", "N/A"));
                         studentNameTextView.setText(studentProfile.optString("first_name", "N/A") + " " +
-                                                    studentProfile.optString("last_name", "N/A"));
+                                studentProfile.optString("last_name", "N/A"));
                         emailTextView.setText(studentProfile.optString("email", "N/A"));
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -104,7 +116,7 @@ public class ProgramOutlineFragment extends Fragment {
                 return headers;
             }
         };
-    
+
         requestQueue.add(request);
     }
 
@@ -116,10 +128,10 @@ public class ProgramOutlineFragment extends Fragment {
             programTitleView.setText("Student ID Missing");
             return;
         }
-    
+
         // Use 10.0.2.2 for localhost on Android emulator
         String programsUrl = "http://10.0.2.2:5000/api/programs?studentId=" + studentId;
-    
+
         JsonObjectRequest programRequest = new JsonObjectRequest(Request.Method.GET, programsUrl, null,
                 response -> {
                     try {
@@ -137,7 +149,7 @@ public class ProgramOutlineFragment extends Fragment {
                     TextView programTitleView = requireView().findViewById(R.id.programTitle);
                     programTitleView.setText("Program Name Not Available");
                 });
-    
+
         requestQueue.add(programRequest);
     }
 
@@ -189,9 +201,9 @@ public class ProgramOutlineFragment extends Fragment {
 
     private void fetchCurrentlyRegisteredCourses(String studentId, List<Course> programCourses, Set<String> completedCourseCodes) {
         String url = "http://10.0.2.2:5000/api/active-registrations?studentId=" + studentId;
-    
+
         Log.d("fetchCurrentlyRegisteredCourses", "Fetching currently registered courses from URL: " + url);
-    
+
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
                 response -> {
                     try {
@@ -202,11 +214,11 @@ public class ProgramOutlineFragment extends Fragment {
                                 currentlyRegisteredCourses.add(obj.getString("course_code"));
                             }
                         }
-    
+
                         // Process and display data
                         Map<String, Map<String, List<String>>> groupedCourses = processCourses(programCourses, completedCourseCodes, currentlyRegisteredCourses);
                         displayProgramOutline(groupedCourses);
-    
+
                     } catch (JSONException e) {
                         Log.e("ProgramOutlineFragment", "Error parsing currently registered courses", e);
                     }
@@ -215,7 +227,7 @@ public class ProgramOutlineFragment extends Fragment {
                     Log.e("ProgramOutlineFragment", "Error fetching currently registered courses: " + error.getMessage());
                     handleError("currently registered courses", error);
                 });
-    
+
         requestQueue.add(request);
     }
 
@@ -297,7 +309,7 @@ public class ProgramOutlineFragment extends Fragment {
     private void displayProgramOutline(Map<String, Map<String, List<String>>> groupedCourses) {
         // Clear the container before adding new content
         programOutlineContainer.removeAllViews();
-    
+
         // Create a header row for the table
         LinearLayout headerRow = new LinearLayout(requireContext());
         headerRow.setOrientation(LinearLayout.HORIZONTAL);
@@ -307,21 +319,21 @@ public class ProgramOutlineFragment extends Fragment {
         ));
         headerRow.setPadding(8, 8, 8, 8);
         headerRow.setBackgroundColor(getResources().getColor(R.color.teal_700));
-    
+
         // Add header columns
         addTableHeader(headerRow, "Year Level"); // New column for Year Level
         addTableHeader(headerRow, "Completed");
         addTableHeader(headerRow, "Currently Registered");
         addTableHeader(headerRow, "Pending Courses");
-    
+
         // Add the header row to the container
         programOutlineContainer.addView(headerRow);
-    
+
         // Iterate through levels and add rows to the table
         for (Map.Entry<String, Map<String, List<String>>> levelEntry : groupedCourses.entrySet()) {
             String level = levelEntry.getKey();
             Map<String, List<String>> categories = levelEntry.getValue();
-    
+
             // Create a row for the level
             LinearLayout levelRow = new LinearLayout(requireContext());
             levelRow.setOrientation(LinearLayout.HORIZONTAL);
@@ -331,15 +343,15 @@ public class ProgramOutlineFragment extends Fragment {
             ));
             levelRow.setPadding(8, 8, 8, 8);
             levelRow.setBackgroundColor(getResources().getColor(R.color.light_gray));
-    
+
             // Add Year Level column
             addTableCell(levelRow, level);
-    
+
             // Add columns for each category
             addTableCell(levelRow, formatCoursesVertically(categories.get("Completed")));
             addTableCell(levelRow, formatCoursesVertically(categories.get("Currently Registered")));
             addTableCell(levelRow, formatCoursesVertically(categories.get("Pending Courses")));
-    
+
             // Add the level row to the container
             programOutlineContainer.addView(levelRow);
         }
@@ -386,4 +398,14 @@ public class ProgramOutlineFragment extends Fragment {
     private void handleError(String dataType, VolleyError error) {
         Log.e("ProgramOutlineFragment", "Error fetching " + dataType + ": " + error.getMessage());
     }
+
+    private void showHoldPage(){
+        Log.d("YourFragment", "Showing hold page now...");
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.content, new ErrorFragment())
+                .commit();
+    }
+
+
 }

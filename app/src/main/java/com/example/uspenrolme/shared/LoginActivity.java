@@ -160,6 +160,7 @@ public class LoginActivity extends AppCompatActivity {
                     progressBar.setVisibility(View.GONE);
 
                 }
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -282,6 +283,7 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, "Error parsing response", Toast.LENGTH_SHORT).show();
 
                 }
+
 
             }
         }, new Response.ErrorListener() {
