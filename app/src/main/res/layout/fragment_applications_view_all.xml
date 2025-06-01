@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/paleWhite"
+    android:padding="15dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Back Button -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize">
+
+            <ImageView
+                android:id="@+id/application_backBtn"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/back_icon"
+                android:padding="10dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"/>
+        </RelativeLayout>
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TRACK APPLICATIONS"
+            android:textSize="36sp"
+            android:fontFamily="@font/bebas"
+            android:textColor="@color/indigo"
+            android:textAllCaps="true"
+            android:padding="10dp"/>
+
+        <!-- Table Headers -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/teal_700"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="ID"
+                android:textColor="@color/white"
+                android:textSize="17sp"
+                android:fontFamily="@font/bebas"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="Date"
+                android:textColor="@color/white"
+                android:textSize="17sp"
+                android:fontFamily="@font/bebas"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="Type"
+                android:textColor="@color/white"
+                android:textSize="17sp"
+                android:fontFamily="@font/bebas"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Status"
+                android:textColor="@color/white"
+                android:textSize="17sp"
+                android:fontFamily="@font/bebas"/>
+        </LinearLayout>
+
+        <!-- RecyclerView -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/application_rc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <ProgressBar
+                android:id="@+id/application_progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:indeterminate="true"
+                android:visibility="gone"
+                android:indeterminateDrawable="@drawable/loading_icon_spinner"/>
+
+            <TextView
+                android:id="@+id/empty_applications"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="No Applications Found"
+                android:textSize="20sp"
+                android:fontFamily="@font/garet"
+                android:visibility="gone"/>
+        </RelativeLayout>
+
+    </LinearLayout>
+</ScrollView>

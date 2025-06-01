@@ -37,6 +37,23 @@ public class StudentApplicationsFragment extends Fragment {
         studentFormsBtn.setOnClickListener(v -> openFragment(new StudentFormsFragment()));
         // Add other button listeners as needed
 
+<<<<<<< HEAD
+=======
+        gradeRecheckBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openFragment(new ApplicationGradeReCheckFragment());
+            }
+        });
+
+        trackApplicationsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openFragment(new ViewApplicationsFragment());
+            }
+        });
+
+>>>>>>> 0927c495ddb7342c8b2b7bebbb85456c52eaeeac
         return view;
     }
 

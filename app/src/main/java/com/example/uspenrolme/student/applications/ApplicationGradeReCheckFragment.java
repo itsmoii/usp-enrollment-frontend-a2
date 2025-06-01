@@ -77,7 +77,7 @@ public class ApplicationGradeReCheckFragment extends Fragment{
         spinnerInstructionTextView = view.findViewById(R.id.spinner_instruction_textview);
         gradeRecheckInstructionTextView = view.findViewById(R.id.grade_recheck_app_instruction_textview);
         succesLayout = view.findViewById(R.id.successLayout);
-        backBtn = requireView().findViewById(R.id.go_back_btn);
+        backBtn = view.findViewById(R.id.go_back_btn);
         newStudentMessageLayout = view.findViewById(R.id.new_student_message_layout);
         viewApplicationsBtn = view.findViewById(R.id.viewDetailsButton);
         recieptNumberTextView = view.findViewById(R.id.recieptNumberTextView);
@@ -86,25 +86,62 @@ public class ApplicationGradeReCheckFragment extends Fragment{
         newStudentMessageLayout.setVisibility(View.GONE);
         // Fetch completed courses
 
-        String token = sharedPreference.getValue_string("token");
-        HoldUtils.checkHold(requireContext(), token, "recheck", isBlocked -> {
-            if(isBlocked){
-                showHoldPage();
-            } else{
-                fetchCompletedCourses();
-
-                // Set onClickListener for Continue button
-                continueBtn.setOnClickListener(v -> {
-                    Log.d("GradeReCheck", "Continue button clicked");
-                    Toast.makeText(requireContext(), "Loading course details...", Toast.LENGTH_SHORT).show();
-                    showCourseInfo();
-                });
-
-                succesLayout.setVisibility(View.GONE);
-                gradeRecheckInstructionTextView.setVisibility(View.GONE);
-                // Set onClickListener for Submit Recheck button
-                submitRecheckBtn.setOnClickListener(v -> submitRecheckRequest());
+        // Set onClickListener for Continue button
+        continueBtn.setOnClickListener(v -> {
+            if (completedCoursesSpinner.getSelectedItem() == null) {
+                Toast.makeText(requireContext(), "Please select a course", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            selectedCourse = completedCoursesSpinner.getSelectedItem().toString();
+            String studentId = sharedPreference.getValue_string("userID");
+            String courseUrl = "http://10.0.2.2:5000/api/course-details/" + studentId + "/" + selectedCourse;
+
+//            checkIfRecheckExists(studentId, selectedCourse, term, exists -> {
+//                if (exists) {
+//                    Toast.makeText(requireContext(), "You’ve already previously submitted a recheck for this course. Select another course.", Toast.LENGTH_LONG).show();
+//                } else {
+//                    showCourseInfo(); // only proceed if not already submitted
+//                }
+//            });
+            JsonObjectRequest courseRequest = new JsonObjectRequest(
+                    Request.Method.GET, courseUrl, null,
+                    response -> {
+                        String courseCode = response.optString("course_code", "N/A");
+                        String courseName = response.optString("course_name", "N/A");
+                        String courseTerm = response.optString("term", "N/A");
+                        courseGrade = response.optString("grade", "N/A");
+//
+//                        courseCodeTextView.setText("Course Code: " + courseCode);
+//                        courseNameTextView.setText("Course Name: " + courseName);
+//                        courseTermTextView.setText("Term: " + courseTerm);
+//                        gradeTextView.setText("Grade: " + courseGrade);
+
+                        // Now use term to check if recheck exists
+                        checkIfRecheckExists(studentId, selectedCourse, courseTerm, exists -> {
+                            Log.d("DEBUG", "Recheck exists: " + exists);
+                            if (exists) {
+                                Log.d("DEBUG", "Recheck exists");
+                                Toast.makeText(requireContext(), "You’ve already submitted a recheck for this course. Select another course.", Toast.LENGTH_LONG).show();
+                            } else {
+                                Log.d("DEBUG", "Recheck does not exist");
+                                // Show UI after passing both validations
+                                spinnerInstructionTextView.setVisibility(View.GONE);
+                                //gradeRecheckInstructionTextView.setVisibility(View.VISIBLE);
+                                //courseInfoLayout.setVisibility(View.VISIBLE);
+                                completedCoursesSpinner.setVisibility(View.GONE);
+                                continueBtn.setVisibility(View.GONE);
+                                showCourseInfo();
+                            }
+                        });
+                    },
+                    error -> {
+                        Log.e("GradeReCheck", "Error fetching course details", error);
+                        Toast.makeText(requireContext(), "Failed to load course details", Toast.LENGTH_SHORT).show();
+                    }
+            );
+
+            requestQueue.add(courseRequest);
         });
     }
 
@@ -120,6 +157,8 @@ public class ApplicationGradeReCheckFragment extends Fragment{
 
         requestQueue.add(request);
     }
+
+
 
     private void processCompletedCoursesResponse(JSONArray response) {
         try {
@@ -204,7 +243,29 @@ public class ApplicationGradeReCheckFragment extends Fragment{
         requestQueue.add(request);
     }
 
-private void submitRecheckRequest() {
+    public interface CheckRecheckCallback {
+        void onResult(boolean exists);
+    }
+    private void checkIfRecheckExists(String studentId, String courseCode, String term, CheckRecheckCallback callback) {
+        String url = "http://10.0.2.2:5000/api/check/" + studentId + "/" + courseCode + "/" + term;
+        Log.d("DEBUG", "Checking recheck status for URL: " + url);
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                response -> {
+            Log.d("DEBUG", "Response: " + response.toString());
+                    boolean exists = response.optBoolean("exists", false);
+                    callback.onResult(exists);
+                    Log.d("DEBUG", "Recheck exists: " + exists);
+                },
+                error -> {
+                    Toast.makeText(requireContext(), "Error checking recheck status", Toast.LENGTH_SHORT).show();
+                    callback.onResult(false); // or true if you want to treat error as existing
+                Log.d("DEBUG", "Error: " + error.toString());
+        }
+        );
+        requestQueue.add(request);
+    }
+
+    private void submitRecheckRequest() {
     String lecturerName = lecturerNameEditText.getText().toString().trim();
     String reason = reasonEditText.getText().toString().trim();
     String recieptNumber = recieptNumberEditView.getText().toString().trim();
