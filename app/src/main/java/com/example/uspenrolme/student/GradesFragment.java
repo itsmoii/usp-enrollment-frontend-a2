@@ -1,49 +1,72 @@
 package com.example.uspenrolme.student;
 
-import android.graphics.Color;
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.pdf.PdfDocument;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Gravity;
-import android.widget.HorizontalScrollView;
-import android.widget.TableLayout;
-import android.widget.TableRow;
+import android.widget.Button;
 import android.widget.TextView;
-import android.graphics.Typeface;
 import android.widget.Toast;
-import android.widget.LinearLayout;
-import android.widget.ImageView;
+import com.example.uspenrolme.R;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 
-
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.uspenrolme.R;
 import com.example.uspenrolme.UtilityService.HoldUtils;
 import com.example.uspenrolme.UtilityService.SharedPreference;
+import com.example.uspenrolme.adapters.GradesPrintDocumentAdapter;
 import com.example.uspenrolme.shared.ErrorFragment;
+import com.google.android.material.tabs.TabLayout;
 
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import com.google.android.material.tabs.TabLayout;
+import androidx.viewpager.widget.ViewPager;
 
+// Import data model classes
+import com.example.uspenrolme.models.GradeItem;
+import com.example.uspenrolme.models.RegisteredCourseItem;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import android.print.PrintManager;
+import android.os.Environment;
 
 public class GradesFragment extends Fragment {
 
+    private static final String TAG = "GradesFragment";
+    private static final int PERMISSION_REQUEST_CODE = 100;
+
     private SharedPreference sharedPref;
     private RequestQueue requestQueue;
-    private TableLayout gradesTable;
+
+    // UI Components
+    private TextView gpaTextView;
+    private TextView registeredCountTextView;
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
+
+    // Define an interface for fragments displayed in the ViewPager to provide data
+    public interface GradesDataProvider {
+        List<GradeItem> getCompletedGradesData();
+        List<RegisteredCourseItem> getRegisteredCoursesData();
+        double getCalculatedGpa();
+        int getRegisteredCourseCount();
+    }
 
     public GradesFragment() {
         // Required empty public constructor
@@ -58,220 +81,184 @@ public class GradesFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        initializeViews(view);
+        setupRequestQueue();
+        checkForHolds();
+        setupButtonListeners(view);
+        setupViewPager(view);
 
-        sharedPref = new SharedPreference(requireContext());
-        requestQueue = Volley.newRequestQueue(requireContext());
-        gradesTable = view.findViewById(R.id.gradesTable);
+         // Add listener to update GPA and count when tab changes
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) { }
 
-        String token = sharedPref.getValue_string("token");
-
-        HoldUtils.checkHold(requireContext(), token, "grades", isBlocked -> {
-            if(isBlocked){
-                showHoldPage();
-            } else{
-                fetchGradesData();
+            @Override
+            public void onPageSelected(int position) {
+                updateGpaAndCountDisplay();
             }
+
+            @Override
+            public void onPageScrollStateChanged(int state) { }
         });
 
-
+        // Initial display update
+         updateGpaAndCountDisplay();
     }
 
-    private void fetchGradesData() {
-        String studentId = sharedPref.getValue_string("userID");
-        String gradesUrl = "http://10.0.2.2:5000/api/completed-courses?studentId=" + studentId;
-
-        JsonArrayRequest gradesRequest = new JsonArrayRequest(
-                Request.Method.GET, gradesUrl, null,
-                this::processGradesResponse,
-                error -> Log.e("GradesFragment", "Error fetching grades", error)
-
-
-        );
-
-        requestQueue.add(gradesRequest);
+    private void initializeViews(View view) {
+        gpaTextView = view.findViewById(R.id.gpaTextView);
+        registeredCountTextView = view.findViewById(R.id.registeredCountTextView);
+        tabLayout = view.findViewById(R.id.tabLayout);
+        viewPager = view.findViewById(R.id.viewPager);
     }
 
-    private void processGradesResponse(JSONArray response) {
-        try {
-            List<GradeItem> grades = new ArrayList<>();
-
-            for (int i = 0; i < response.length(); i++) {
-                JSONObject gradeObj = response.getJSONObject(i);
-                String term = gradeObj.optString("term", "N/A");
-                String courseCode = gradeObj.optString("CourseID", "N/A");
-                String title = gradeObj.optString("title", "N/A");
-                String campus = gradeObj.optString("campus", "N/A");
-                String mode = gradeObj.optString("mode", "N/A");
-                String grade = gradeObj.optString("grade", "N/A");
-
-                grades.add(new GradeItem(term, courseCode, title, campus, mode, grade));
-            }
-
-            displayGrades(grades);
-        } catch (JSONException e) {
-            Log.e("GradesFragment", "Error parsing grades response", e);
-        }
+    private void setupRequestQueue() {
+        sharedPref = new SharedPreference(requireContext());
+        requestQueue = Volley.newRequestQueue(requireContext());
     }
 
-    private void displayGrades(List<GradeItem> grades) {
-        if (!isAdded()) return; // Prevent crash if fragment is not attached
-
-        // Clear existing views
-        gradesTable.removeAllViews();
-
-        // Create table header
-        TableRow headerRow = new TableRow(requireContext());
-        headerRow.setBackgroundColor(getResources().getColor(R.color.teal_700));
-
-        addHeaderCell(headerRow, "TERM");
-        addHeaderCell(headerRow, "COURSE");
-        addHeaderCell(headerRow, "TITLE");
-        addHeaderCell(headerRow, "CAMPUS");
-        addHeaderCell(headerRow, "MODE");
-        addHeaderCell(headerRow, "GRADE");
-
-        gradesTable.addView(headerRow);
-
-        // Add grade rows
-        double totalPoints = 0.0;
-        int totalCourses = 0;
-
-        for (int i = 0; i < grades.size(); i++) {
-            GradeItem grade = grades.get(i);
-
-            TableRow gradeRow = new TableRow(requireContext());
-
-            // Alternate row colors
-            if (i % 2 == 0) {
-                gradeRow.setBackgroundColor(Color.WHITE); // White for even rows
+    private void checkForHolds() {
+        String token = sharedPref.getValue_string("token");
+        HoldUtils.checkHold(requireContext(), token, "grades", isBlocked -> {
+            if (isBlocked) {
+                showHoldPage();
             } else {
-                gradeRow.setBackgroundColor(getResources().getColor(R.color.light_gray)); // Light gray for odd rows
+                viewPager.setVisibility(View.VISIBLE);
+                tabLayout.setVisibility(View.VISIBLE);
+                 updateGpaAndCountDisplay(); // Update display after data is likely loaded
             }
-
-            addGradeCell(gradeRow, grade.getTerm());
-            addGradeCell(gradeRow, grade.getCourseCode());
-            addGradeCell(gradeRow, grade.getTitle());
-            addGradeCell(gradeRow, grade.getCampus());
-            addGradeCell(gradeRow, grade.getMode());
-
-            // Grade cell
-            TextView gradeCell = new TextView(requireContext());
-            gradeCell.setText(grade.getGrade());
-            gradeCell.setTextSize(14);
-            gradeCell.setPadding(16, 8, 16, 8);
-            gradeCell.setGravity(Gravity.CENTER);
-            gradeCell.setTextColor(Color.BLACK); // Set grade text color to black
-            gradeRow.addView(gradeCell);
-
-            gradesTable.addView(gradeRow);
-
-            // Calculate GPA
-            double gradePoints = getGradePoints(grade.getGrade());
-            if (gradePoints >= 0) {
-                totalPoints += gradePoints;
-                totalCourses++;
-            }
-        }
-
-        // Calculate and display GPA
-        double gpa = totalCourses > 0 ? totalPoints / totalCourses : 0.0;
-        TextView gpaTextView = requireView().findViewById(R.id.gpaTextView);
-        gpaTextView.setText(String.format("%.2f", gpa));
+        });
     }
-    
-    private double getGradePoints(String grade) {
-        switch (grade.toUpperCase()) {
-            case "A+":
-                return 4.5;
-            case "A":
-                return 4.0;
-            case "B+":
-                return 3.5;
-            case "B":
-                return 3.0;
-            case "C+":
-                return 2.5;
-            case "C":
-                return 2.0;
-            case "D+":
-                return 1.5;
-            case "D":
-                return 1.0;
-            case "F":
-                return 0.0;
-            default:
-                return -1.0; // Invalid grade
+
+    private void setupButtonListeners(View view) {
+        Button savePdfButton = view.findViewById(R.id.savePdfButton);
+
+        savePdfButton.setOnClickListener(v -> saveAsPdf());
+    }
+
+    public void updateGpaAndCountDisplay() {
+        Fragment currentFragment = getChildFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewPager + ":" + viewPager.getCurrentItem());
+        if (currentFragment instanceof GradesDataProvider) {
+            GradesDataProvider dataProvider = (GradesDataProvider) currentFragment;
+            double gpa = dataProvider.getCalculatedGpa();
+            int registeredCount = dataProvider.getRegisteredCourseCount();
+
+            gpaTextView.setText(String.format(Locale.getDefault(), "GPA: %.2f", gpa));
+            registeredCountTextView.setText(String.format(Locale.getDefault(), "REGISTERED: %d", registeredCount));
+        } else {
+            // Handle case where fragment is not a GradesDataProvider (shouldn't happen with our adapter)
+            gpaTextView.setText("GPA: N/A");
+            registeredCountTextView.setText("REGISTERED: N/A");
         }
     }
 
-    private void addHeaderCell(TableRow row, String text) {
-        TextView cell = new TextView(requireContext());
-        cell.setText(text);
-        cell.setTextSize(16);
-        cell.setTypeface(null, Typeface.BOLD);
-        cell.setTextColor(Color.WHITE);
-        cell.setPadding(20, 20, 20, 20); // Increased padding for height
-        cell.setGravity(Gravity.CENTER);
-        cell.setLayoutParams(new TableRow.LayoutParams(
-                TableRow.LayoutParams.WRAP_CONTENT,
-                TableRow.LayoutParams.WRAP_CONTENT
-        ));
-        row.addView(cell);
-    }
-    
-    private void addGradeCell(TableRow row, String text) {
-        TextView cell = new TextView(requireContext());
-        cell.setText(text);
-        cell.setTextSize(14);
-        cell.setPadding(20, 20, 20, 20); // Increased padding for height
-        cell.setGravity(Gravity.CENTER);
-        cell.setLayoutParams(new TableRow.LayoutParams(
-                TableRow.LayoutParams.WRAP_CONTENT,
-                TableRow.LayoutParams.WRAP_CONTENT
-        ));
-        row.addView(cell);
-    }
-
-    private boolean isPassingGrade(String grade) {
-        // Define which grades are considered passing
-        String[] passingGrades = {"A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "S"};
-        for (String passingGrade : passingGrades) {
-            if (passingGrade.equalsIgnoreCase(grade)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static class GradeItem {
-        private final String term;
-        private final String courseCode;
-        private final String title;
-        private final String campus;
-        private final String mode;
-        private final String grade;
-
-        public GradeItem(String term, String courseCode, String title, String campus, String mode, String grade) {
-            this.term = term;
-            this.courseCode = courseCode;
-            this.title = title;
-            this.campus = campus;
-            this.mode = mode;
-            this.grade = grade;
-        }
-
-        public String getTerm() { return term; }
-        public String getCourseCode() { return courseCode; }
-        public String getTitle() { return title; }
-        public String getCampus() { return campus; }
-        public String getMode() { return mode; }
-        public String getGrade() { return grade; }
-    }
-    private void showHoldPage(){
-        Log.d("YourFragment", "Showing hold page now...");
+    private void showHoldPage() {
         requireActivity().getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.content, new ErrorFragment())
                 .commit();
+    }
+
+    private void saveAsPdf() {
+         Fragment currentFragment = getChildFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewPager + ":" + viewPager.getCurrentItem());
+         if (currentFragment instanceof GradesDataProvider) {
+             GradesDataProvider dataProvider = (GradesDataProvider) currentFragment;
+             List<GradeItem> completedGrades = dataProvider.getCompletedGradesData();
+             List<RegisteredCourseItem> registeredCourses = dataProvider.getRegisteredCoursesData();
+              double gpa = dataProvider.getCalculatedGpa(); // Get GPA from the active fragment
+
+              // Only include grades and GPA if the current tab is Completed
+             List<GradeItem> gradesToSave = (currentFragment instanceof CompletedGradesFragment) ? completedGrades : new ArrayList<>();
+             List<RegisteredCourseItem> coursesToSave = (currentFragment instanceof RegisteredCoursesFragment) ? registeredCourses : new ArrayList<>();
+              double gpaToSave = (currentFragment instanceof CompletedGradesFragment) ? gpa : 0.0; // Only show GPA for completed grades
+
+             PdfDocument document = new PdfDocument();
+             try {
+                 PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
+                 PdfDocument.Page page = document.startPage(pageInfo);
+                 Canvas canvas = page.getCanvas();
+
+                  // You will need to adapt the drawDocumentContent method in GradesPrintDocumentAdapter
+                  // to handle potentially empty lists based on which tab is active.
+                 GradesPrintDocumentAdapter pdfAdapter = new GradesPrintDocumentAdapter(requireContext(), gradesToSave, coursesToSave, gpaToSave);
+                 pdfAdapter.drawDocumentContent(canvas);
+
+                 document.finishPage(page);
+
+                 File file = createPdfFile();
+                 saveDocumentToFile(document, file);
+             } catch (Exception e) {
+                 Log.e(TAG, "Error generating PDF", e);
+                 showErrorToast("Error generating PDF");
+             } finally {
+                 document.close();
+             }
+         }
+    }
+
+    // The following methods are related to PDF drawing and file handling.
+    // They might need adjustments in GradesPrintDocumentAdapter to handle cases where
+    // one of the lists (completedGrades or registeredCourses) is empty based on the active tab.
+
+     private File createPdfFile() {
+         File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+         String fileName = "Grades_" + sharedPref.getValue_string("userID") + "_" + System.currentTimeMillis() + ".pdf";
+         return new File(downloadsDir, fileName);
+     }
+
+     private void saveDocumentToFile(PdfDocument document, File file) throws IOException {
+         try (FileOutputStream fos = new FileOutputStream(file)) {
+             document.writeTo(fos);
+             showSuccessToast("PDF saved to Downloads");
+         }
+     }
+
+
+    private String getCurrentDate() {
+        return new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+    }
+
+    private void showErrorToast(String message) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void showSuccessToast(String message) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        }
+
+        @NonNull
+        @Override
+        public Fragment getItem(int position) {
+            return new CompletedGradesFragment();
+        }
+
+        @Nullable
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return "Completed";
+        }
+
+        @Override
+        public int getCount() {
+            return 1;
+        }
+    }
+
+    private void setupViewPager(View view) {
+        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
+
+        viewPager.setAdapter(sectionsPagerAdapter);
+
+        tabLayout.setupWithViewPager(viewPager);
+
+        viewPager.setVisibility(View.GONE); // Keep hidden initially until hold check
+
+        viewPager.setCurrentItem(0);
     }
 }

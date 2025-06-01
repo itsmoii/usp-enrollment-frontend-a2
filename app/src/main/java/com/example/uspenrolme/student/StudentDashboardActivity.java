@@ -10,6 +10,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -107,6 +109,11 @@ public class StudentDashboardActivity  extends AppCompatActivity implements Frag
         initDrawer();
         getUserProfile();
 
+        // Load the default fragment when the activity is created
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.content, new HomeFragment()).commit();
+            navView.setCheckedItem(R.id.action_home);
+        }
     }
 
     private void getUserProfile(){
@@ -235,6 +242,10 @@ public class StudentDashboardActivity  extends AppCompatActivity implements Frag
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            drawerLayout.openDrawer(GravityCompat.START);
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
