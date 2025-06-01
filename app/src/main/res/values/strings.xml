@@ -14,7 +14,7 @@
     <string name="gpa_label">GPA:</string>
     <string name="registered_label">Registered:</string>
     <string name="print_grades">Print Grades</string>
-    <string name="save_pdf">Save as PDF</string>
+    <string name="save_pdf">Print Transcript</string>
 
     <string-array name="applying_for_options">
         <item>Select</item>
