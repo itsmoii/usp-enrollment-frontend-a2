@@ -1,4 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/paleWhite"
@@ -13,47 +15,62 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="GRADES"
+            android:text="@string/grades_title"
             android:textSize="36sp"
             android:fontFamily="@font/bebas"
             android:textColor="@color/indigo"
             android:textAllCaps="true"
             android:padding="10dp" />
 
-        <!-- Table Header -->
-        <HorizontalScrollView
+        <!-- Tab Layout -->
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scrollbars="horizontal">
+            android:background="@color/white"
+            app:tabIndicatorColor="@color/teal_700"
+            app:tabSelectedTextColor="@color/teal_700"
+            app:tabTextColor="@color/grey"
+            app:tabMode="fixed"
+            app:tabGravity="fill"
+            android:layout_marginBottom="16dp"
+            android:contentDescription="@string/tab_layout_description">
 
-            <TableLayout
-                android:id="@+id/gradesTable"
+            <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:stretchColumns="1"
-                android:paddingBottom="16dp" />
-        </HorizontalScrollView>
+                android:text="@string/completed_tab" />
 
-        <!-- GPA Section -->
-        <RelativeLayout
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/registered_tab" />
+        </com.google.android.material.tabs.TabLayout>
+
+        <!-- ViewPager for tabs -->
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            android:layout_marginBottom="16dp"
+            android:contentDescription="@string/view_pager_description"/>
+
+        <!-- GPA and Course Count Section -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="20dp">
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/grey"
-                android:layout_marginBottom="10dp" />
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:gravity="center_horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cumulative GPA:"
+                android:text="@string/gpa_label"
                 android:textColor="@color/black"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:fontFamily="@font/bebas"
-                android:layout_marginTop="10dp" />
+                android:layout_marginEnd="8dp"/>
 
             <TextView
                 android:id="@+id/gpaTextView"
@@ -61,10 +78,59 @@
                 android:layout_height="wrap_content"
                 android:text="0.00"
                 android:textColor="@color/black"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:fontFamily="@font/bebas"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="10dp" />
-        </RelativeLayout>
+                android:layout_marginEnd="24dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/registered_label"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:fontFamily="@font/bebas"
+                android:layout_marginEnd="8dp"/>
+
+            <TextView
+                android:id="@+id/registeredCountTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:fontFamily="@font/bebas"/>
+        </LinearLayout>
+
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:padding="16dp">
+
+            <Button
+                android:id="@+id/printButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/print_grades"
+                android:backgroundTint="@color/teal_700"
+                android:textColor="@color/white"
+                android:drawableStart="@drawable/ic_print"
+                android:drawablePadding="8dp"
+                android:padding="12dp"/>
+
+            <Button
+                android:id="@+id/savePdfButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/save_pdf"
+                android:backgroundTint="@color/teal_700"
+                android:textColor="@color/white"
+                android:drawableStart="@drawable/ic_pdf"
+                android:drawablePadding="8dp"
+                android:padding="12dp"
+                android:layout_marginStart="16dp"/>
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.filament.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -72,6 +73,7 @@ dependencies {
     implementation("de.hdodenhof:circleimageview:3.0.0")
     implementation("com.squareup.picasso:picasso:2.5.2")
     implementation("com.jjoe64:graphview:4.2.2")
+    implementation("com.google.android.material:material:1.6.0")
 
     // Exclude conflicting support libraries
     configurations.all {

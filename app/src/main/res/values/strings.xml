@@ -6,7 +6,15 @@
     <string name="drawer_close">navigation_drawer_close</string>
     <string name="hold_message">Please select the services students on fee hold <b>will not</b> be able to access</string>
     <string name="active_hold">Please make payments at your campus cashier or pay now through the invoice section in your finance menu</string>
-
+    <string name="grades_title">GRADES</string>
+    <string name="tab_layout_description">Courses navigation tabs</string>
+    <string name="view_pager_description">Courses content area</string>
+    <string name="completed_tab">Completed</string>
+    <string name="registered_tab">Registered</string>
+    <string name="gpa_label">GPA:</string>
+    <string name="registered_label">Registered:</string>
+    <string name="print_grades">Print Grades</string>
+    <string name="save_pdf">Save as PDF</string>
 
     <string-array name="applying_for_options">
         <item>Select</item>
