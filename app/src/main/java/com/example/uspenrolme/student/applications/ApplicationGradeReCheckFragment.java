@@ -28,12 +28,15 @@ import com.example.uspenrolme.UtilityService.SharedPreference;
 import com.example.uspenrolme.shared.ErrorFragment;
 import com.example.uspenrolme.student.CoursesFragment;
 import com.example.uspenrolme.student.finance.FinanceMenu;
+import com.example.uspenrolme.UtilityService.Logger;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 public class ApplicationGradeReCheckFragment extends Fragment{
@@ -84,9 +87,9 @@ public class ApplicationGradeReCheckFragment extends Fragment{
         recieptNumberEditView =view.findViewById(R.id.recieptNumberEditText);
 
         newStudentMessageLayout.setVisibility(View.GONE);
-        // Fetch completed courses
 
-        // Set onClickListener for Continue button
+        fetchCompletedCourses();
+
         continueBtn.setOnClickListener(v -> {
             if (completedCoursesSpinner.getSelectedItem() == null) {
                 Toast.makeText(requireContext(), "Please select a course", Toast.LENGTH_SHORT).show();
@@ -97,13 +100,6 @@ public class ApplicationGradeReCheckFragment extends Fragment{
             String studentId = sharedPreference.getValue_string("userID");
             String courseUrl = "http://10.0.2.2:5000/api/course-details/" + studentId + "/" + selectedCourse;
 
-//            checkIfRecheckExists(studentId, selectedCourse, term, exists -> {
-//                if (exists) {
-//                    Toast.makeText(requireContext(), "You’ve already previously submitted a recheck for this course. Select another course.", Toast.LENGTH_LONG).show();
-//                } else {
-//                    showCourseInfo(); // only proceed if not already submitted
-//                }
-//            });
             JsonObjectRequest courseRequest = new JsonObjectRequest(
                     Request.Method.GET, courseUrl, null,
                     response -> {
@@ -111,13 +107,7 @@ public class ApplicationGradeReCheckFragment extends Fragment{
                         String courseName = response.optString("course_name", "N/A");
                         String courseTerm = response.optString("term", "N/A");
                         courseGrade = response.optString("grade", "N/A");
-//
-//                        courseCodeTextView.setText("Course Code: " + courseCode);
-//                        courseNameTextView.setText("Course Name: " + courseName);
-//                        courseTermTextView.setText("Term: " + courseTerm);
-//                        gradeTextView.setText("Grade: " + courseGrade);
 
-                        // Now use term to check if recheck exists
                         checkIfRecheckExists(studentId, selectedCourse, courseTerm, exists -> {
                             Log.d("DEBUG", "Recheck exists: " + exists);
                             if (exists) {
@@ -125,10 +115,7 @@ public class ApplicationGradeReCheckFragment extends Fragment{
                                 Toast.makeText(requireContext(), "You’ve already submitted a recheck for this course. Select another course.", Toast.LENGTH_LONG).show();
                             } else {
                                 Log.d("DEBUG", "Recheck does not exist");
-                                // Show UI after passing both validations
                                 spinnerInstructionTextView.setVisibility(View.GONE);
-                                //gradeRecheckInstructionTextView.setVisibility(View.VISIBLE);
-                                //courseInfoLayout.setVisibility(View.VISIBLE);
                                 completedCoursesSpinner.setVisibility(View.GONE);
                                 continueBtn.setVisibility(View.GONE);
                                 showCourseInfo();
@@ -143,6 +130,8 @@ public class ApplicationGradeReCheckFragment extends Fragment{
 
             requestQueue.add(courseRequest);
         });
+
+        submitRecheckBtn.setOnClickListener(v -> submitRecheckRequest());
     }
 
     private void fetchCompletedCourses() {
@@ -158,15 +147,50 @@ public class ApplicationGradeReCheckFragment extends Fragment{
         requestQueue.add(request);
     }
 
-
-
     private void processCompletedCoursesResponse(JSONArray response) {
+        completedCourses.clear();
+        List<String> eligibleGrades = Arrays.asList("B", "C+", "C", "D+", "D", "F");
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+
         try {
             for (int i = 0; i < response.length(); i++) {
                 JSONObject courseObj = response.getJSONObject(i);
-                String courseCode = courseObj.optString("CourseID", "N/A");
-                completedCourses.add(courseCode);
+
+                // Try both "course" and "CourseID" keys for compatibility
+                String courseCode = courseObj.optString("course", courseObj.optString("CourseID", "N/A"));
+                String grade = courseObj.optString("grade", "N/A");
+                String term = courseObj.optString("term", "N/A");
+
+                // Parse term as YYYYTT (e.g., 202301)
+                int termYear = 0;
+                try {
+                    if (term.length() >= 6) {
+                        termYear = Integer.parseInt(term.substring(0, 4));
+                    }
+                } catch (Exception ignored) {}
+
+                // Only allow courses from the last 2 years
+                boolean within2Years = false;
+                if (termYear > 0) {
+                    if (currentYear - termYear < 2) {
+                        within2Years = true;
+                    } else if (currentYear - termYear == 2) {
+                        // If exactly 2 years ago, check if term is later in the year
+                        int termNum = 1;
+                        try {
+                            termNum = Integer.parseInt(term.substring(4));
+                        } catch (Exception ignored) {}
+                        int currentMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
+                        int currentTerm = currentMonth <= 6 ? 1 : 2;
+                        if (termNum >= currentTerm) within2Years = true;
+                    }
+                }
+
+                if (within2Years && eligibleGrades.contains(grade.toUpperCase())) {
+                    completedCourses.add(courseCode);
+                }
             }
+
             if(completedCourses.isEmpty()){
                 completedCoursesSpinner.setVisibility(View.GONE);
                 continueBtn.setVisibility(View.GONE);
@@ -174,12 +198,10 @@ public class ApplicationGradeReCheckFragment extends Fragment{
                 newStudentMessageLayout.setVisibility(View.VISIBLE);
 
                 backBtn.setOnClickListener(v -> {
-                    // Replace with your actual fragment transaction code
                     getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content, new StudentApplicationsFragment()).commit();
                 });
             }
 
-            // Set adapter for Spinner
             ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
                     android.R.layout.simple_spinner_item, completedCourses);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -190,13 +212,11 @@ public class ApplicationGradeReCheckFragment extends Fragment{
     }
 
     private void openFragment(Fragment fragment){
-
         getActivity().getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.content, fragment)
                 .addToBackStack(null)
                 .commit();
-
     }
 
     private void showCourseInfo(){
@@ -213,19 +233,16 @@ public class ApplicationGradeReCheckFragment extends Fragment{
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET, courseUrl, null,
                 response -> {
-                    // Extract values safely
                     String courseCode = response.optString("course_code", "N/A");
                     String courseName = response.optString("course_name", "N/A");
                     String courseTerm = response.optString("term", "N/A");
                     courseGrade = response.optString("grade", "N/A");
 
-                    // Set data to text views
                     courseCodeTextView.setText("Course Code: " + courseCode);
                     courseNameTextView.setText("Course Name: " + courseName);
                     courseTermTextView.setText("Term: " + courseTerm);
                     gradeTextView.setText("Grade: " + courseGrade);
 
-                    // Show course info layout
                     spinnerInstructionTextView.setVisibility(View.GONE);
                     gradeRecheckInstructionTextView.setVisibility(View.VISIBLE);
                     courseInfoLayout.setVisibility(View.VISIBLE);
@@ -234,7 +251,6 @@ public class ApplicationGradeReCheckFragment extends Fragment{
                     Log.d("GradeReCheck", "API Response: " + response.toString());
                 },
                 error -> {
-
                     Log.e("GradeReCheck", "Error fetching course details", error);
                     Toast.makeText(requireContext(), "Failed to load course details", Toast.LENGTH_SHORT).show();
                 }
@@ -251,94 +267,92 @@ public class ApplicationGradeReCheckFragment extends Fragment{
         Log.d("DEBUG", "Checking recheck status for URL: " + url);
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {
-            Log.d("DEBUG", "Response: " + response.toString());
+                    Log.d("DEBUG", "Response: " + response.toString());
                     boolean exists = response.optBoolean("exists", false);
                     callback.onResult(exists);
                     Log.d("DEBUG", "Recheck exists: " + exists);
                 },
                 error -> {
                     Toast.makeText(requireContext(), "Error checking recheck status", Toast.LENGTH_SHORT).show();
-                    callback.onResult(false); // or true if you want to treat error as existing
-                Log.d("DEBUG", "Error: " + error.toString());
-        }
+                    callback.onResult(false);
+                    Log.d("DEBUG", "Error: " + error.toString());
+                }
         );
         requestQueue.add(request);
     }
 
     private void submitRecheckRequest() {
-    String lecturerName = lecturerNameEditText.getText().toString().trim();
-    String reason = reasonEditText.getText().toString().trim();
-    String recieptNumber = recieptNumberEditView.getText().toString().trim();
-    String termText = courseTermTextView.getText().toString().trim();
-    String term = termText.replace("Term: ", "").trim();
+        String lecturerName = lecturerNameEditText.getText().toString().trim();
+        String reason = reasonEditText.getText().toString().trim();
+        String recieptNumber = recieptNumberEditView.getText().toString().trim();
+        String termText = courseTermTextView.getText().toString().trim();
+        String term = termText.replace("Term: ", "").trim();
 
-    if (lecturerName.isEmpty() || reason.isEmpty() || recieptNumber.isEmpty()) {
-        Toast.makeText(requireContext(), "Please provide all details", Toast.LENGTH_SHORT).show();
-        return;
-    }
-
-    if (!recieptNumber.matches("^\\d{13}$")) { //ensure that recipt number only contains 13 digits adn no extra characters
-        Toast.makeText(requireContext(), "Receipt number must be exactly 13 digits & not other special characters", Toast.LENGTH_SHORT).show();
-        return;
-    }
-
-    String studentId = sharedPreference.getValue_string("userID");
-    String token = sharedPreference.getValue_string("authToken"); // Make sure this was saved during login
-
-//    if (token == null || token.isEmpty()) {
-//        Toast.makeText(requireContext(), "Authentication token missing. Please login again.", Toast.LENGTH_LONG).show();
-//        return;
-//    }
-
-    String recheckUrl = "http://10.0.2.2:5000/api/submit-recheck";
-    JSONObject recheckData = new JSONObject();
-
-    try {
-        recheckData.put("studentId", studentId);
-        recheckData.put("courseCode", selectedCourse);
-        recheckData.put("lecturerName", lecturerName);
-        recheckData.put("reason", reason);
-        recheckData.put("term", term);
-        recheckData.put("recieptNumber", recieptNumber);
-    } catch (JSONException e) {
-        Log.e("GradeReCheck", "Error creating recheck data", e);
-        Toast.makeText(requireContext(), "Error creating request data", Toast.LENGTH_SHORT).show();
-        return;
-    }
-
-    JsonObjectRequest request = new JsonObjectRequest(
-            Request.Method.POST,
-            recheckUrl,
-            recheckData,
-            response -> {
-                Log.d("GradeReCheck", "Recheck submitted: " + response.toString());
-                Toast.makeText(requireContext(), "Recheck request submitted", Toast.LENGTH_SHORT).show();
-                gradeRecheckInstructionTextView.setVisibility(View.GONE);
-                courseInfoLayout .setVisibility(View.GONE);
-                succesLayout.setVisibility(View.VISIBLE);
-
-                viewApplicationsBtn.setOnClickListener(v -> {
-                    // Replace with your actual fragment transaction code
-                    //getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content, new ViewApplicationsFragment()).commit();
-
-                });
-            },
-            error -> {
-                Log.e("GradeReCheck", "Error submitting recheck", error);
-                Toast.makeText(requireContext(), "Failed to submit recheck request", Toast.LENGTH_SHORT).show();
-            }
-    ) {
-        @Override
-        public java.util.Map<String, String> getHeaders() {
-            java.util.Map<String, String> headers = new java.util.HashMap<>();
-            headers.put("Authorization", "Bearer " + token); // Attach JWT
-            headers.put("Content-Type", "application/json");
-            return headers;
+        if (lecturerName.isEmpty() || reason.isEmpty() || recieptNumber.isEmpty()) {
+            Toast.makeText(requireContext(), "Please provide all details", Toast.LENGTH_SHORT).show();
+            return;
         }
-    };
 
-    requestQueue.add(request);
-}
+        if (!recieptNumber.matches("^\\d{13}$")) {
+            Toast.makeText(requireContext(), "Receipt number must be exactly 13 digits & not other special characters", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String studentId = sharedPreference.getValue_string("userID");
+        String token = sharedPreference.getValue_string("authToken");
+
+        String recheckUrl = "http://10.0.2.2:5000/api/submit-recheck";
+        JSONObject recheckData = new JSONObject();
+
+        try {
+            recheckData.put("studentId", studentId);
+            recheckData.put("courseCode", selectedCourse);
+            recheckData.put("lecturerName", lecturerName);
+            recheckData.put("reason", reason);
+            recheckData.put("term", term);
+            recheckData.put("recieptNumber", recieptNumber);
+        } catch (JSONException e) {
+            Log.e("GradeReCheck", "Error creating recheck data", e);
+            Toast.makeText(requireContext(), "Error creating request data", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.POST,
+                recheckUrl,
+                recheckData,
+                response -> {
+                    Log.d("GradeReCheck", "Recheck submitted: " + response.toString());
+                    Toast.makeText(requireContext(), "Recheck request submitted", Toast.LENGTH_SHORT).show();
+                    Logger.logEvent("GradeRecheck", "Grade recheck application submitted for student: " + studentId + ", course: " + selectedCourse);
+                    gradeRecheckInstructionTextView.setVisibility(View.GONE);
+                    courseInfoLayout.setVisibility(View.GONE);
+                    succesLayout.setVisibility(View.VISIBLE);
+
+                    viewApplicationsBtn.setOnClickListener(v -> {
+                        requireActivity().getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.content, new ViewApplicationsFragment())
+                                .addToBackStack(null)
+                                .commit();
+                    });
+                },
+                error -> {
+                    Log.e("GradeReCheck", "Error submitting recheck", error);
+                    Toast.makeText(requireContext(), "Failed to submit recheck request", Toast.LENGTH_SHORT).show();
+                }
+        ) {
+            @Override
+            public java.util.Map<String, String> getHeaders() {
+                java.util.Map<String, String> headers = new java.util.HashMap<>();
+                headers.put("Authorization", "Bearer " + token);
+                headers.put("Content-Type", "application/json");
+                return headers;
+            }
+        };
+
+        requestQueue.add(request);
+    }
 
     private void showHoldPage(){
         Log.d("YourFragment", "Showing hold page now...");
@@ -347,5 +361,4 @@ public class ApplicationGradeReCheckFragment extends Fragment{
                 .replace(R.id.content, new ErrorFragment())
                 .commit();
     }
-
 }

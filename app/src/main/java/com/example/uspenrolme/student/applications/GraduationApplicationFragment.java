@@ -10,6 +10,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -40,6 +41,11 @@ public class GraduationApplicationFragment extends Fragment {
     private EditText signatureEditText, dateEditText;
     private RadioGroup programmeTypeRadioGroup;
     private CheckBox declarationCheckbox;
+    private LinearLayout successLayout;
+    private Button viewDetailsButton;
+
+    // Add this for the main form layout
+    private LinearLayout mainFormLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -70,10 +76,13 @@ public class GraduationApplicationFragment extends Fragment {
         signatureEditText = view.findViewById(R.id.signature_edittext);
         dateEditText = view.findViewById(R.id.date_edittext);
         declarationCheckbox = view.findViewById(R.id.declaration_checkbox);
+        successLayout = view.findViewById(R.id.successLayout);
+        viewDetailsButton = view.findViewById(R.id.viewDetailsButton);
+
+        // Bind the main form layout (wrap your form fields in XML in a LinearLayout with this id)
+        mainFormLayout = view.findViewById(R.id.main_form_layout);
 
         submitBtn = view.findViewById(R.id.submit_graduation_btn);
-
-
 
         String token = sharedPreference.getValue_string("token");
         HoldUtils.checkHold(requireContext(), token, "graduation", isBlocked -> {
@@ -86,6 +95,15 @@ public class GraduationApplicationFragment extends Fragment {
                 fetchAndFillStudentProfile();
             }
         });
+
+        // Set up the view details button to go to TrackApplicationsFragment
+        viewDetailsButton.setOnClickListener(v -> {
+            requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.content, new ViewApplicationsFragment())
+                .addToBackStack(null)
+                .commit();
+        });
     }
 
     private void fetchAndFillStudentProfile() {
@@ -95,10 +113,7 @@ public class GraduationApplicationFragment extends Fragment {
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
             response -> {
                 try {
-                    // Log the response to debug structure
                     Log.d("GRAD_APP_PROFILE", "Profile response: " + response.toString());
-
-                    // If your backend returns { profile: { ... } }
                     JSONObject profile = response.has("profile") ? response.getJSONObject("profile") : response;
 
                     studentIdEditText.setText(profile.optString("student_id", ""));
@@ -167,7 +182,6 @@ public class GraduationApplicationFragment extends Fragment {
         JSONObject data = new JSONObject();
         JSONObject applicationData = new JSONObject();
         try {
-            // Put all application fields in applicationData
             applicationData.put("name", name);
             applicationData.put("email", email);
             applicationData.put("telephone", telephone);
@@ -181,7 +195,6 @@ public class GraduationApplicationFragment extends Fragment {
             applicationData.put("signature", signature);
             applicationData.put("date", date);
 
-            // Top-level object
             data.put("studentId", studentId);
             data.put("applicationData", applicationData);
         } catch (JSONException e) {
@@ -191,6 +204,7 @@ public class GraduationApplicationFragment extends Fragment {
 
         Logger.logEvent("GraduationApp", "Submitting graduation application for student: " + studentId);
 
+        // ...existing code...
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
                 url,
@@ -198,11 +212,31 @@ public class GraduationApplicationFragment extends Fragment {
                 response -> {
                     Toast.makeText(requireContext(), "Graduation application submitted", Toast.LENGTH_SHORT).show();
                     Logger.logEvent("GraduationApp", "Graduation application submitted successfully for student: " + studentId);
+
+                    // Hide the form and show the success layout
+                    if (mainFormLayout != null) mainFormLayout.setVisibility(View.GONE);
+                    if (successLayout != null) successLayout.setVisibility(View.VISIBLE);
+
                     sendGraduationEmailNotification(studentId);
                 },
                 error -> {
-                    Toast.makeText(requireContext(), "Failed to submit application", Toast.LENGTH_SHORT).show();
-                    Logger.logEvent("GraduationApp", "Failed to submit graduation application for student: " + studentId);
+                    // Improved error logging for debugging
+                    String errorMsg = "Failed to submit application";
+                    if (error.networkResponse != null) {
+                        errorMsg += " (HTTP " + error.networkResponse.statusCode + ")";
+                        try {
+                            errorMsg += ": " + new String(error.networkResponse.data);
+                        } catch (Exception ignored) {}
+                        // Accept 201 as success (some Volley configs treat only 200 as success)
+                        if (error.networkResponse.statusCode == 201) {
+                            if (mainFormLayout != null) mainFormLayout.setVisibility(View.GONE);
+                            if (successLayout != null) successLayout.setVisibility(View.VISIBLE);
+                            sendGraduationEmailNotification(studentId);
+                            return;
+                        }
+                    }
+                    Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show();
+                    Logger.logEvent("GraduationApp", errorMsg + " for student: " + studentId);
                 }
         ) {
             @Override
@@ -217,8 +251,8 @@ public class GraduationApplicationFragment extends Fragment {
         requestQueue.add(request);
     }
 
+    //AOP Programming.
     private void sendGraduationEmailNotification(String studentId) {
-        // Simulate sending email notification and log it (AOP)
         Logger.logEvent("Notification", "Email notification sent for graduation application: student=" + studentId);
     }
 

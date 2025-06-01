@@ -46,6 +46,13 @@ public class CompassionateAegrotatApplicationFragment extends Fragment {
     private static final int PICK_FILE_REQUEST_CODE = 101;
     private Uri selectedFileUri = null;
     private String uploadedEvidenceUrl = "";
+    private LinearLayout mainFormLayout;
+    private LinearLayout successLayout;
+    private Button viewDetailsButton;
+
+    // For tracking submissions
+    private int successfulSubmissions = 0;
+    private int totalSubmissions = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -81,11 +88,22 @@ public class CompassionateAegrotatApplicationFragment extends Fragment {
         submitBtn = view.findViewById(R.id.submit_compassionate_btn);
         uploadEvidenceBtn = view.findViewById(R.id.attach_documents_btn);
 
+        mainFormLayout = view.findViewById(R.id.main_form_layout);
+        successLayout = view.findViewById(R.id.successLayout);
+        viewDetailsButton = view.findViewById(R.id.viewDetailsButton);
+
         uploadEvidenceBtn.setOnClickListener(v -> pickFile());
 
         submitBtn.setOnClickListener(v -> {
-            Toast.makeText(requireContext(), "Submit clicked", Toast.LENGTH_SHORT).show();
             submitApplicationsByType();
+        });
+
+        viewDetailsButton.setOnClickListener(v -> {
+            requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.content, new ViewApplicationsFragment())
+                .addToBackStack(null)
+                .commit();
         });
     }
 
@@ -233,95 +251,109 @@ public class CompassionateAegrotatApplicationFragment extends Fragment {
     }
 
     private void submitApplicationsByType() {
-    String token = sharedPreference.getValue_string("authToken");
+        String token = sharedPreference.getValue_string("authToken");
 
-    String studentId = studentIdEditText.getText().toString().trim();
-    String reason = reasonEditText.getText().toString().trim();
-    String evidence = evidenceEditText.getText().toString().trim();
-    String signature = signatureEditText.getText().toString().trim();
-    String date = dateEditText.getText().toString().trim();
-    boolean declarationChecked = declarationCheckbox.isChecked();
+        String studentId = studentIdEditText.getText().toString().trim();
+        String reason = reasonEditText.getText().toString().trim();
+        String evidence = evidenceEditText.getText().toString().trim();
+        String signature = signatureEditText.getText().toString().trim();
+        String date = dateEditText.getText().toString().trim();
+        boolean declarationChecked = declarationCheckbox.isChecked();
 
-    if (studentId.isEmpty() || reason.isEmpty() || signature.isEmpty() || date.isEmpty() || !declarationChecked) {
-        Toast.makeText(requireContext(), "Please fill all required fields and check the declaration.", Toast.LENGTH_SHORT).show();
-        return;
-    }
-
-    boolean atLeastOne = false;
-
-    for (View row : courseRows) {
-        EditText codeEdit = row.findViewById(R.id.course_code_edit);
-        EditText dateEdit = row.findViewById(R.id.exam_date_edit);
-        EditText timeEdit = row.findViewById(R.id.exam_time_edit);
-        Spinner spinner = row.findViewById(R.id.applying_for_spinner);
-
-        String code = codeEdit.getText().toString().trim();
-        String examDate = dateEdit.getText().toString().trim();
-        String examTime = timeEdit.getText().toString().trim();
-        String applyingFor = spinner.getSelectedItem() != null ? spinner.getSelectedItem().toString() : "";
-
-        int applicationTypeId = -1;
-        String endpoint = null;
-        if (applyingFor.equalsIgnoreCase("Compassionate Pass")) {
-            endpoint = "http://10.0.2.2:5000/api/applications/compassionate";
-            applicationTypeId = 3;
-        } else if (applyingFor.equalsIgnoreCase("Aegrotat Pass")) {
-            endpoint = "http://10.0.2.2:5000/api/applications/aegrotat";
-            applicationTypeId = 4;
-        } else if (applyingFor.equalsIgnoreCase("Special Exam")) {
-            endpoint = "http://10.0.2.2:5000/api/applications/special-exam";
-            applicationTypeId = 5;
-        } else {
-            continue;
+        if (studentId.isEmpty() || reason.isEmpty() || signature.isEmpty() || date.isEmpty() || !declarationChecked) {
+            Toast.makeText(requireContext(), "Please fill all required fields and check the declaration.", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        if (!code.isEmpty() && !examDate.isEmpty() && !examTime.isEmpty() && applicationTypeId != -1) {
-            atLeastOne = true;
+        boolean atLeastOne = false;
+        successfulSubmissions = 0;
+        totalSubmissions = 0;
 
-            JSONObject data = new JSONObject();
-            try {
-                data.put("studentId", studentId);
-                data.put("reason", reason);
-                data.put("courseId", code);
-                data.put("examDate", examDate);
-                data.put("examTime", examTime);
-                data.put("supportingDocsUrl", evidence);
-                data.put("applicationTypeId", applicationTypeId); // <-- ADD THIS LINE
-            } catch (JSONException e) {
-                Toast.makeText(requireContext(), "Error creating request", Toast.LENGTH_SHORT).show();
+        for (View row : courseRows) {
+            EditText codeEdit = row.findViewById(R.id.course_code_edit);
+            EditText dateEdit = row.findViewById(R.id.exam_date_edit);
+            EditText timeEdit = row.findViewById(R.id.exam_time_edit);
+            Spinner spinner = row.findViewById(R.id.applying_for_spinner);
+
+            String code = codeEdit.getText().toString().trim();
+            String examDate = dateEdit.getText().toString().trim();
+            String examTime = timeEdit.getText().toString().trim();
+            String applyingFor = spinner.getSelectedItem() != null ? spinner.getSelectedItem().toString() : "";
+
+            int applicationTypeId = -1;
+            String endpoint = null;
+            if (applyingFor.equalsIgnoreCase("Compassionate Pass")) {
+                endpoint = "http://10.0.2.2:5000/api/applications/compassionate";
+                applicationTypeId = 3;
+            } else if (applyingFor.equalsIgnoreCase("Aegrotat Pass")) {
+                endpoint = "http://10.0.2.2:5000/api/applications/aegrotat";
+                applicationTypeId = 4;
+            } else if (applyingFor.equalsIgnoreCase("Special Exam")) {
+                endpoint = "http://10.0.2.2:5000/api/applications/special-exam";
+                applicationTypeId = 5;
+            } else {
                 continue;
             }
 
-            JsonObjectRequest request = new JsonObjectRequest(
-                    Request.Method.POST,
-                    endpoint,
-                    data,
-                    response -> Toast.makeText(requireContext(), "Application submitted for " + applyingFor, Toast.LENGTH_SHORT).show(),
-                    error -> {
-                        // If the backend actually succeeded, but response parsing failed, treat as success
-                        if (error.networkResponse != null && 
-                            (error.networkResponse.statusCode == 200 || error.networkResponse.statusCode == 201)) {
-                            Toast.makeText(requireContext(), "Application submitted for " + applyingFor, Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(requireContext(), "Failed to submit " + applyingFor + " application", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-            ) {
-                @Override
-                public java.util.Map<String, String> getHeaders() {
-                    java.util.Map<String, String> headers = new java.util.HashMap<>();
-                    headers.put("Authorization", "Bearer " + token);
-                    headers.put("Content-Type", "application/json");
-                    return headers;
-                }
-            };
+            if (!code.isEmpty() && !examDate.isEmpty() && !examTime.isEmpty() && applicationTypeId != -1) {
+                atLeastOne = true;
+                totalSubmissions++;
 
-            requestQueue.add(request);
+                JSONObject data = new JSONObject();
+                try {
+                    data.put("studentId", studentId);
+                    data.put("reason", reason);
+                    data.put("courseId", code);
+                    data.put("examDate", examDate);
+                    data.put("examTime", examTime);
+                    data.put("supportingDocsUrl", evidence);
+                    data.put("applicationTypeId", applicationTypeId);
+                } catch (JSONException e) {
+                    Toast.makeText(requireContext(), "Error creating request", Toast.LENGTH_SHORT).show();
+                    continue;
+                }
+
+                JsonObjectRequest request = new JsonObjectRequest(
+                        Request.Method.POST,
+                        endpoint,
+                        data,
+                        response -> {
+                            successfulSubmissions++;
+                            checkAndShowSuccess();
+                        },
+                        error -> {
+                            if (error.networkResponse != null &&
+                                    (error.networkResponse.statusCode == 200 || error.networkResponse.statusCode == 201)) {
+                                successfulSubmissions++;
+                                checkAndShowSuccess();
+                            } else {
+                                Toast.makeText(requireContext(), "Failed to submit " + applyingFor + " application", Toast.LENGTH_SHORT).show();
+                                checkAndShowSuccess();
+                            }
+                        }
+                ) {
+                    @Override
+                    public java.util.Map<String, String> getHeaders() {
+                        java.util.Map<String, String> headers = new java.util.HashMap<>();
+                        headers.put("Authorization", "Bearer " + token);
+                        headers.put("Content-Type", "application/json");
+                        return headers;
+                    }
+                };
+
+                requestQueue.add(request);
+            }
+        }
+
+        if (!atLeastOne) {
+            Toast.makeText(requireContext(), "Please add at least one valid missed exam.", Toast.LENGTH_SHORT).show();
         }
     }
 
-    if (!atLeastOne) {
-        Toast.makeText(requireContext(), "Please add at least one valid missed exam.", Toast.LENGTH_SHORT).show();
+    private void checkAndShowSuccess() {
+        if (successfulSubmissions == totalSubmissions && totalSubmissions > 0) {
+            if (mainFormLayout != null) mainFormLayout.setVisibility(View.GONE);
+            if (successLayout != null) successLayout.setVisibility(View.VISIBLE);
+        }
     }
-}
 }

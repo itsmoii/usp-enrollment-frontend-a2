@@ -34,6 +34,7 @@
             app:cardElevation="8dp">
 
             <LinearLayout
+                android:id="@+id/main_form_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -337,5 +338,53 @@
                     android:layout_marginTop="16dp"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
+        <!-- Success Layout-->
+        <LinearLayout
+            android:id="@+id/successLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:gravity="center"
+            android:padding="24dp">
+
+            <ImageView
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:src="@drawable/application_checkmark"
+                android:layout_marginBottom="16dp"
+                android:contentDescription="Success" />
+
+            <TextView
+                android:id="@+id/successMessage1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Your Application has been submitted successfully!"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/indigo"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:id="@+id/successMessage2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="You will be notified once the process is complete."
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/indigo"
+                android:gravity="center"
+                android:layout_marginBottom="16dp" />
+
+            <Button
+                android:id="@+id/viewDetailsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="View Application Details"
+                android:backgroundTint="@color/indigo"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
+
     </LinearLayout>
 </ScrollView>
