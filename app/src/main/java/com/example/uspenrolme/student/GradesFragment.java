@@ -146,7 +146,7 @@ public class GradesFragment extends Fragment {
     }
 
     private void fetchGradesData() {
-        String studentId = sharedPref.getString("userID", "N/A");
+        String studentId = sharedPref.getValue_string("userID");
         String gradesUrl = "http://10.0.2.2:5000/api/completed-courses?studentId=" + studentId;
 
         JsonArrayRequest gradesRequest = new JsonArrayRequest(
@@ -434,8 +434,8 @@ public class GradesFragment extends Fragment {
 
     private void printSemesterGrades(String semester, List<GradeItem> courses, double gpa) {
         // Create HTML content for printing
-        String studentName = sharedPref.getString("userName", "Student");
-        String studentId = sharedPref.getString("userID", "N/A");
+        String studentName = sharedPref.getValue_string("userName");
+        String studentId = sharedPref.getValue_string("userID");
 
         StringBuilder htmlContent = new StringBuilder();
         htmlContent.append("<html><head><title>Semester Grades Report</title>");
