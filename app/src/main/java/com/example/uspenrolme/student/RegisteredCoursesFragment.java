@@ -189,8 +189,4 @@ public class RegisteredCoursesFragment extends Fragment implements GradesDataPro
         return 0.0;
     }
 
-    @Override
-    public int getRegisteredCourseCount() {
-        return currentRegisteredCourses.size();
-    }
 }

@@ -119,11 +119,12 @@ public class GradesPrintDocumentAdapter extends PrintDocumentAdapter {
 
         currentY = drawTitleSection(canvas, paint, currentY + SECTION_SPACING);
 
+        currentY = drawSeparatorLine(canvas, paint, currentY + SECTION_SPACING);
+
         if (!grades.isEmpty()) {
              currentY = drawCompletedCoursesSection(canvas, paint, currentY + SECTION_SPACING);
+             currentY = drawSeparatorLine(canvas, paint, currentY + SECTION_SPACING);
         }
-
-         currentY = drawSeparatorLine(canvas, paint, currentY + SECTION_SPACING);
 
          currentY = drawNotesSection(canvas, paint, currentY + SECTION_SPACING);
 
@@ -149,53 +150,56 @@ public class GradesPrintDocumentAdapter extends PrintDocumentAdapter {
         currentY += LINE_HEIGHT;
         canvas.drawText("Date: " + getCurrentDate(), MARGIN, currentY, paint);
 
-        currentY += LINE_HEIGHT * 2;
+        currentY += SECTION_SPACING;
         canvas.drawText(sharedPref.getValue_string("username"), MARGIN, currentY, paint);
         currentY += LINE_HEIGHT;
         canvas.drawText("PO Box 851", MARGIN, currentY, paint);
         currentY += LINE_HEIGHT;
         canvas.drawText("Nabua, Fiji", MARGIN, currentY, paint);
 
-        return Math.max(currentY, startY + (LINE_HEIGHT * 6));
+        return currentY;
     }
 
     private float drawTitleSection(Canvas canvas, Paint paint, float startY) {
+        float currentY = startY;
+
         paint.setTextSize(TEXT_SIZE_HEADER + 4);
         paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-        canvas.drawText("NOTIFICATION OF EXAM RESULTS", MARGIN, startY, paint);
+        canvas.drawText("NOTIFICATION OF EXAM RESULTS", MARGIN, currentY, paint);
 
+        currentY += LINE_HEIGHT * 1.5f;
         paint.setTextSize(TEXT_SIZE_BODY);
         paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
-        canvas.drawText("Semester 1 2021", MARGIN, startY + LINE_HEIGHT * 1.5f, paint);
+        canvas.drawText("Semester 1 2021", MARGIN, currentY, paint);
 
+        currentY += LINE_HEIGHT * 1.5f;
         paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-        canvas.drawText("Program: Bachelor of Science (majoring in Electrical/Electro Engeering and Computing Science)", MARGIN, startY + LINE_HEIGHT * 3f, paint);
         paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
 
-        return startY + LINE_HEIGHT * 4;
+        return currentY + LINE_HEIGHT;
     }
 
     private float drawCompletedCoursesSection(Canvas canvas, Paint paint, float startY) {
         float currentY = startY;
 
+        // Draw table headers
         paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-        canvas.drawText("Campus", MARGIN, currentY, paint);
-        canvas.drawText("Course", MARGIN + 50, currentY, paint);
-        canvas.drawText("Title", MARGIN + 150, currentY, paint);
+        canvas.drawText("Course", MARGIN, currentY, paint);
+        canvas.drawText("Title", MARGIN + 100, currentY, paint);
         canvas.drawText("Pass", MARGIN + 400, currentY, paint);
         canvas.drawText("Fail", MARGIN + 480, currentY, paint);
         paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
 
         currentY += LINE_HEIGHT;
 
+        // Draw grades
         for (GradeItem grade : grades) {
             boolean isPass = isPassingGrade(grade.getGrade());
 
             paint.setColor(isPass ? Color.BLACK : Color.RED);
 
-            canvas.drawText(grade.getCampus(), MARGIN, currentY, paint);
-            canvas.drawText(grade.getCourseCode(), MARGIN + 50, currentY, paint);
-            canvas.drawText(shortenTextIfNeeded(grade.getTitle(), 30), MARGIN + 150, currentY, paint);
+            canvas.drawText(grade.getCourseCode(), MARGIN, currentY, paint);
+            canvas.drawText(shortenTextIfNeeded(grade.getTitle(), 30), MARGIN + 100, currentY, paint);
 
             if (isPass) {
                 canvas.drawText(grade.getGrade(), MARGIN + 400, currentY, paint);
@@ -206,6 +210,7 @@ public class GradesPrintDocumentAdapter extends PrintDocumentAdapter {
             currentY += LINE_HEIGHT;
         }
 
+        // Draw GPA
         paint.setColor(Color.BLACK);
         paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
         canvas.drawText("GPA: " + String.format(Locale.getDefault(), "%.2f", gpa), MARGIN, currentY + LINE_HEIGHT, paint);
@@ -225,21 +230,21 @@ public class GradesPrintDocumentAdapter extends PrintDocumentAdapter {
     private float drawRegisteredCoursesSection(Canvas canvas, Paint paint, float startY) {
          float currentY = startY;
 
+        // Draw table headers
         paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-        canvas.drawText("Campus", MARGIN, currentY, paint);
-        canvas.drawText("Course", MARGIN + 50, currentY, paint);
-        canvas.drawText("Title", MARGIN + 150, currentY, paint);
+        canvas.drawText("Course", MARGIN, currentY, paint);
+        canvas.drawText("Title", MARGIN + 100, currentY, paint);
         canvas.drawText("Status", MARGIN + 450, currentY, paint);
         paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
 
         currentY += LINE_HEIGHT;
 
+        // Draw registered courses
         for (RegisteredCourseItem course : registeredCourses) {
             paint.setColor(course.getStatus().equalsIgnoreCase("Failed") ? Color.RED : Color.BLACK);
 
-            canvas.drawText(course.getCampus(), MARGIN, currentY, paint);
-            canvas.drawText(course.getCourseCode(), MARGIN + 50, currentY, paint);
-            canvas.drawText(shortenTextIfNeeded(course.getTitle(), 30), MARGIN + 150, currentY, paint);
+            canvas.drawText(course.getCourseCode(), MARGIN, currentY, paint);
+            canvas.drawText(shortenTextIfNeeded(course.getTitle(), 30), MARGIN + 100, currentY, paint);
 
             canvas.drawText(course.getStatus(), MARGIN + 450, currentY, paint);
 
@@ -250,10 +255,12 @@ public class GradesPrintDocumentAdapter extends PrintDocumentAdapter {
     }
 
     private float drawSeparatorLine(Canvas canvas, Paint paint, float startY) {
-         paint.setColor(Color.BLACK);
-         paint.setStrokeWidth(1);
-         canvas.drawLine(MARGIN, startY, PAGE_WIDTH - MARGIN, startY, paint);
-         return startY;
+        paint.setColor(Color.GRAY);
+        paint.setStrokeWidth(0.5f);
+        canvas.drawLine(MARGIN, startY, PAGE_WIDTH - MARGIN, startY, paint);
+        paint.setColor(Color.BLACK);
+        paint.setStrokeWidth(1f);
+        return startY;
     }
 
      private float drawNotesSection(Canvas canvas, Paint paint, float startY) {
@@ -262,16 +269,19 @@ public class GradesPrintDocumentAdapter extends PrintDocumentAdapter {
          paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
          canvas.drawText("Note:", MARGIN, currentY, paint);
          paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
-
          currentY += LINE_HEIGHT;
 
-         canvas.drawText("1 Fee for reconsideration of course grade is FJ$100", MARGIN, currentY, paint);
-         currentY += LINE_HEIGHT;
-         canvas.drawText("2 Issued without alterations or erasures", MARGIN, currentY, paint);
-         currentY += LINE_HEIGHT;
-         canvas.drawText("3 Invalid unless official university stamp appears", MARGIN, currentY, paint);
-         currentY += LINE_HEIGHT;
-         canvas.drawText("4 English is the medium of teaching in all undergraduate and postgraduate courses at the University of the South Pacific", MARGIN, currentY, paint);
+         String[] notes = {
+                 "1 Fee for reconsideration of course grade is FJ$100",
+                 "2 Issued without alterations or erasures",
+                 "3 Invalid unless official university stamp appears",
+                 "4 English is the medium of teaching in all undergraduate and postgraduate courses at the University of the South Pacific"
+         };
+
+         for (String note : notes) {
+             canvas.drawText(note, MARGIN, currentY, paint);
+             currentY += LINE_HEIGHT;
+         }
 
          return currentY;
      }
@@ -282,65 +292,82 @@ public class GradesPrintDocumentAdapter extends PrintDocumentAdapter {
          paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
          canvas.drawText("Key to Grading System", MARGIN, currentY, paint);
          paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+         currentY += LINE_HEIGHT * 1.5f;
 
-         currentY += LINE_HEIGHT;
+         float leftColX = MARGIN;
+         float rightColX = MARGIN + 250;
 
-         float column1X = MARGIN;
-         float column2X = MARGIN + 250;
-
+         // Pass Grades
          paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-         canvas.drawText("Pass Grades", column1X, currentY, paint);
-         canvas.drawText("Fail Grades", column2X, currentY, paint);
-         canvas.drawText("Pending Results", column2X + 150, currentY, paint);
+         canvas.drawText("Pass Grades", leftColX, currentY, paint);
          paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
-
          currentY += LINE_HEIGHT;
 
-         canvas.drawText("A+", column1X, currentY, paint);
-         canvas.drawText("A", column1X, currentY + LINE_HEIGHT, paint);
-         canvas.drawText("B+", column1X, currentY + LINE_HEIGHT * 2, paint);
-         canvas.drawText("B", column1X, currentY + LINE_HEIGHT * 3, paint);
-         canvas.drawText("C+", column1X, currentY + LINE_HEIGHT * 4, paint);
-         canvas.drawText("C", column1X, currentY + LINE_HEIGHT * 5, paint);
-         canvas.drawText("R", column1X, currentY + LINE_HEIGHT * 6, paint);
-         canvas.drawText("Aeg", column1X, currentY + LINE_HEIGHT * 7, paint);
-         canvas.drawText("Comp", column1X, currentY + LINE_HEIGHT * 8, paint);
-         canvas.drawText("Pas", column1X, currentY + LINE_HEIGHT * 9, paint);
-         canvas.drawText("S", column1X, currentY + LINE_HEIGHT * 10, paint);
+         String[] passGrades = {
+                 "A+ | Pass with Distinction",
+                 "A",
+                 "B+ | Pass with Credit",
+                 "B",
+                 "C+",
+                 "C",
+                 "R  | Restricted Pass",
+                 "Aeq| Aegrotat Pass",
+                 "Comp| Compassionate Pass",
+                 "Pas | Pass or Competent",
+                 "S  | Satisfactory"
+         };
 
-         canvas.drawText("}", column1X + 20, currentY + LINE_HEIGHT * 0.5f, paint);
-         canvas.drawText("Pass with Distinction", column1X + 35, currentY + LINE_HEIGHT * 0.5f, paint);
-         canvas.drawText("}", column1X + 20, currentY + LINE_HEIGHT * 2.5f, paint);
-         canvas.drawText("Pass with Credit", column1X + 35, currentY + LINE_HEIGHT * 2.5f, paint);
-         canvas.drawText("}", column1X + 20, currentY + LINE_HEIGHT * 5.5f, paint);
-         canvas.drawText("Pass", column1X + 35, currentY + LINE_HEIGHT * 5.5f, paint);
-         canvas.drawText("Restricted Pass", column1X + 35, currentY + LINE_HEIGHT * 6, paint);
-         canvas.drawText("Aegrotat Pass", column1X + 35, currentY + LINE_HEIGHT * 7, paint);
-         canvas.drawText("Compassionate Pass", column1X + 35, currentY + LINE_HEIGHT * 8, paint);
-         canvas.drawText("Pass or Competent", column1X + 35, currentY + LINE_HEIGHT * 9, paint);
-         canvas.drawText("Satisfactory", column1X + 35, currentY + LINE_HEIGHT * 10, paint);
+         for (String grade : passGrades) {
+             canvas.drawText(grade, leftColX, currentY, paint);
+             currentY += LINE_HEIGHT;
+         }
 
-         canvas.drawText("D", column2X, currentY, paint);
-         canvas.drawText("E", column2X, currentY + LINE_HEIGHT, paint);
-         canvas.drawText("NV", column2X, currentY + LINE_HEIGHT * 2, paint);
-         canvas.drawText("U", column2X, currentY + LINE_HEIGHT * 3, paint);
-         canvas.drawText("Fail", column2X, currentY + LINE_HEIGHT * 4, paint);
-         canvas.drawText("Not competent", column2X + 35, currentY + LINE_HEIGHT * 5, paint);
-         canvas.drawText("The letter 'X' when used together with a fail grade indicates that the student did", column2X, currentY + LINE_HEIGHT * 6, paint);
-         canvas.drawText("not sit the final examination in that course", column2X, currentY + LINE_HEIGHT * 7, paint);
+         currentY = startY + LINE_HEIGHT * 1.5f; // Reset Y for right column
 
-         canvas.drawText("I", column2X + 150, currentY + LINE_HEIGHT * 8, paint);
-         canvas.drawText("IP", column2X + 150, currentY + LINE_HEIGHT * 9, paint);
-         canvas.drawText("NA", column2X + 150, currentY + LINE_HEIGHT * 10, paint);
+         // Fail Grades
+         paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+         canvas.drawText("Fail Grades", rightColX, currentY, paint);
+         paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+         currentY += LINE_HEIGHT;
 
-         canvas.drawText("Work below standard required for a pass", column2X + 20, currentY, paint);
-         canvas.drawText("Very weak performance", column2X + 20, currentY + LINE_HEIGHT, paint);
-         canvas.drawText("Dishonest practice", column2X + 20, currentY + LINE_HEIGHT * 2, paint);
-         canvas.drawText("Unsatisfactory", column2X + 20, currentY + LINE_HEIGHT * 3, paint);
+         String[] failGrades = {
+                 "D  | Work below standard required for a pass",
+                 "E  | Very weak performance",
+                 "NV | Dishonest practice",
+                 "U  | Unsatisfactory",
+                 "   | Fail", // Keep alignment
+                 "\nX  | Not competent",
+                  "The letter 'X' when used together with a fail grade indicates that the student",
+                  "not sit the final examination in that course."
+         };
 
-         canvas.drawText("Incomplete - student still to complete assessment element", column2X + 170, currentY + LINE_HEIGHT * 8, paint);
-         canvas.drawText("In Progress - multi-semester thesis or dissertation", column2X + 170, currentY + LINE_HEIGHT * 9, paint);
-         canvas.drawText("Not available - staff member still to confirm final grade", column2X + 170, currentY + LINE_HEIGHT * 10, paint);
+         for (String grade : failGrades) {
+              // Handle potential newlines in the text
+              String[] lines = grade.split("\\n");
+              for(String line : lines) {
+                 canvas.drawText(line, rightColX, currentY, paint);
+                 currentY += LINE_HEIGHT;
+              }
+         }
+
+         currentY += LINE_HEIGHT; // Add some space before Pending Results
+
+         // Pending Results
+         paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+         canvas.drawText("Pending Results", rightColX, currentY, paint);
+         paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+         currentY += LINE_HEIGHT;
+
+         String[] pendingResults = {
+                 "I  | Incomplete - student still to complete course requirements",
+                 "IP | In Progress - multi-semester course",
+                 "NA | Not available - staff member still to submit results"
+         };
+
+          for (String result : pendingResults) {
+             canvas.drawText(result, rightColX, currentY, paint);
+             currentY += LINE_HEIGHT;
+         }
      }
 
     private String shortenTextIfNeeded(String text, int maxLength) {
@@ -374,5 +401,13 @@ public class GradesPrintDocumentAdapter extends PrintDocumentAdapter {
     public void onFinish() {
         super.onFinish();
         closeDocument();
+    }
+
+    private void drawHorizontalLine(Canvas canvas, Paint paint, float y1, float y2) {
+        paint.setColor(Color.GRAY);
+        paint.setStrokeWidth(0.5f);
+        canvas.drawLine(MARGIN, y1, PAGE_WIDTH - MARGIN, y1, paint);
+        paint.setColor(Color.BLACK);
+        paint.setStrokeWidth(1f);
     }
 }

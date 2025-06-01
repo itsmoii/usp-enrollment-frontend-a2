@@ -218,9 +218,4 @@ public class CompletedGradesFragment extends Fragment implements GradesDataProvi
     public double getCalculatedGpa() {
         return currentGpa;
     }
-
-    @Override
-    public int getRegisteredCourseCount() {
-        return 0;
-    }
 }

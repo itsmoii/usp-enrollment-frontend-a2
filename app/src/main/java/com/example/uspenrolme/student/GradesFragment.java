@@ -56,7 +56,6 @@ public class GradesFragment extends Fragment {
 
     // UI Components
     private TextView gpaTextView;
-    private TextView registeredCountTextView;
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
@@ -65,7 +64,6 @@ public class GradesFragment extends Fragment {
         List<GradeItem> getCompletedGradesData();
         List<RegisteredCourseItem> getRegisteredCoursesData();
         double getCalculatedGpa();
-        int getRegisteredCourseCount();
     }
 
     public GradesFragment() {
@@ -107,7 +105,6 @@ public class GradesFragment extends Fragment {
 
     private void initializeViews(View view) {
         gpaTextView = view.findViewById(R.id.gpaTextView);
-        registeredCountTextView = view.findViewById(R.id.registeredCountTextView);
         tabLayout = view.findViewById(R.id.tabLayout);
         viewPager = view.findViewById(R.id.viewPager);
     }
@@ -141,14 +138,11 @@ public class GradesFragment extends Fragment {
         if (currentFragment instanceof GradesDataProvider) {
             GradesDataProvider dataProvider = (GradesDataProvider) currentFragment;
             double gpa = dataProvider.getCalculatedGpa();
-            int registeredCount = dataProvider.getRegisteredCourseCount();
 
-            gpaTextView.setText(String.format(Locale.getDefault(), "GPA: %.2f", gpa));
-            registeredCountTextView.setText(String.format(Locale.getDefault(), "REGISTERED: %d", registeredCount));
+            gpaTextView.setText(String.format(Locale.getDefault(), "%.2f", gpa));
         } else {
             // Handle case where fragment is not a GradesDataProvider (shouldn't happen with our adapter)
             gpaTextView.setText("GPA: N/A");
-            registeredCountTextView.setText("REGISTERED: N/A");
         }
     }
 
