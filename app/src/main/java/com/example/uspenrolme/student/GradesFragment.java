@@ -69,8 +69,7 @@ public class GradesFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_grades, container, false);
         gradesTable = view.findViewById(R.id.gradesTable);
-        loadingIndicator = view.findViewById(R.id.loadingIndicator);
-
+        
         loadGrades();
         return view;
     }
