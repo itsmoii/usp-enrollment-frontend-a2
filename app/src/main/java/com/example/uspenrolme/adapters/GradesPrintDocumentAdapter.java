@@ -18,6 +18,9 @@ import android.util.Log;
 
 import com.example.uspenrolme.UtilityService.SharedPreference;
 import com.example.uspenrolme.student.GradesFragment;
+import com.example.uspenrolme.R;
+import com.example.uspenrolme.models.GradeItem;
+import com.example.uspenrolme.models.RegisteredCourseItem;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -37,15 +40,15 @@ public class GradesPrintDocumentAdapter extends PrintDocumentAdapter {
     private static final int LINE_HEIGHT = 20;
 
     private final Context context;
-    private final List<GradesFragment.GradeItem> grades;
-    private final List<GradesFragment.RegisteredCourseItem> registeredCourses;
+    private final List<GradeItem> grades;
+    private final List<RegisteredCourseItem> registeredCourses;
     private final double gpa;
     private PrintedPdfDocument document;
     private PrintAttributes printAttributes;
 
     public GradesPrintDocumentAdapter(Context context,
-                                      List<GradesFragment.GradeItem> grades,
-                                      List<GradesFragment.RegisteredCourseItem> registeredCourses,
+                                      List<GradeItem> grades,
+                                      List<RegisteredCourseItem> registeredCourses,
                                       double gpa) {
         this.context = context;
         this.grades = grades;
@@ -169,7 +172,7 @@ public class GradesPrintDocumentAdapter extends PrintDocumentAdapter {
         currentY += LINE_HEIGHT;
 
         // Draw grades
-        for (GradesFragment.GradeItem grade : grades) {
+        for (GradeItem grade : grades) {
             paint.setColor(grade.getGrade().equalsIgnoreCase("F") ? Color.RED : Color.BLACK);
 
             canvas.drawText(grade.getTerm(), MARGIN, currentY, paint);
@@ -199,7 +202,7 @@ public class GradesPrintDocumentAdapter extends PrintDocumentAdapter {
         currentY += LINE_HEIGHT;
 
         // Draw registered courses
-        for (GradesFragment.RegisteredCourseItem course : registeredCourses) {
+        for (RegisteredCourseItem course : registeredCourses) {
             paint.setColor(course.getStatus().equalsIgnoreCase("Failed") ? Color.RED : Color.BLACK);
 
             canvas.drawText(course.getTerm(), MARGIN, currentY, paint);
