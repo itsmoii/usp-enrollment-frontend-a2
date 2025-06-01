@@ -27,7 +27,7 @@ public class StudentApplicationsFragment extends Fragment {
 
         trackApplicationsBtn = view.findViewById(R.id.track_application_btn);
         notificationsBtn = view.findViewById(R.id.application_notification_btn);
-        //gradeRecheckBtn = view.findViewById(R.id.grade_recheck_btn);
+        gradeRecheckBtn = view.findViewById(R.id.grade_recheck_btn);
         studentFormsBtn = view.findViewById(R.id.student_forms_btn);
 
         trackApplicationsBtn.setOnClickListener(v -> openFragment(new TrackApplicationsFragment()));
@@ -37,8 +37,6 @@ public class StudentApplicationsFragment extends Fragment {
         studentFormsBtn.setOnClickListener(v -> openFragment(new StudentFormsFragment()));
         // Add other button listeners as needed
 
-<<<<<<< HEAD
-=======
         gradeRecheckBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,7 +51,6 @@ public class StudentApplicationsFragment extends Fragment {
             }
         });
 
->>>>>>> 0927c495ddb7342c8b2b7bebbb85456c52eaeeac
         return view;
     }
 

@@ -114,44 +114,46 @@ public class GradesFragment extends Fragment {
     }
 
     private void displayGrades(List<GradeItem> grades) {
+        if (!isAdded()) return; // Prevent crash if fragment is not attached
+
         // Clear existing views
         gradesTable.removeAllViews();
-    
+
         // Create table header
         TableRow headerRow = new TableRow(requireContext());
         headerRow.setBackgroundColor(getResources().getColor(R.color.teal_700));
-    
+
         addHeaderCell(headerRow, "TERM");
         addHeaderCell(headerRow, "COURSE");
         addHeaderCell(headerRow, "TITLE");
         addHeaderCell(headerRow, "CAMPUS");
         addHeaderCell(headerRow, "MODE");
         addHeaderCell(headerRow, "GRADE");
-    
+
         gradesTable.addView(headerRow);
-    
+
         // Add grade rows
         double totalPoints = 0.0;
         int totalCourses = 0;
-    
+
         for (int i = 0; i < grades.size(); i++) {
             GradeItem grade = grades.get(i);
-    
+
             TableRow gradeRow = new TableRow(requireContext());
-    
+
             // Alternate row colors
             if (i % 2 == 0) {
                 gradeRow.setBackgroundColor(Color.WHITE); // White for even rows
             } else {
                 gradeRow.setBackgroundColor(getResources().getColor(R.color.light_gray)); // Light gray for odd rows
             }
-    
+
             addGradeCell(gradeRow, grade.getTerm());
             addGradeCell(gradeRow, grade.getCourseCode());
             addGradeCell(gradeRow, grade.getTitle());
             addGradeCell(gradeRow, grade.getCampus());
             addGradeCell(gradeRow, grade.getMode());
-    
+
             // Grade cell
             TextView gradeCell = new TextView(requireContext());
             gradeCell.setText(grade.getGrade());
@@ -160,9 +162,9 @@ public class GradesFragment extends Fragment {
             gradeCell.setGravity(Gravity.CENTER);
             gradeCell.setTextColor(Color.BLACK); // Set grade text color to black
             gradeRow.addView(gradeCell);
-    
+
             gradesTable.addView(gradeRow);
-    
+
             // Calculate GPA
             double gradePoints = getGradePoints(grade.getGrade());
             if (gradePoints >= 0) {
@@ -170,7 +172,7 @@ public class GradesFragment extends Fragment {
                 totalCourses++;
             }
         }
-    
+
         // Calculate and display GPA
         double gpa = totalCourses > 0 ? totalPoints / totalCourses : 0.0;
         TextView gpaTextView = requireView().findViewById(R.id.gpaTextView);
