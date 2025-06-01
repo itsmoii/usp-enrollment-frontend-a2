@@ -1,7 +1,6 @@
 package com.example.uspenrolme.student.applications;
 
 import com.example.uspenrolme.models.ApplicationsModel;
-import com.example.uspenrolme.adapters.ApplicationsAdapter;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +16,6 @@ import com.example.uspenrolme.R;
 public class ApplicationDetailsFragment extends Fragment {
 
     private static final String ARG_APPLICATION = "application";
-
     private ApplicationsModel application;
 
     public static ApplicationDetailsFragment newInstance(ApplicationsModel application) {

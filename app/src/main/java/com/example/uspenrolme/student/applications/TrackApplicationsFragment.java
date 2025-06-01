@@ -13,11 +13,12 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.uspenrolme.R;
 import com.example.uspenrolme.UtilityService.SharedPreference;
+import com.example.uspenrolme.models.ApplicationsModel;
+import com.example.uspenrolme.adapters.ApplicationsAdapter;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +27,9 @@ public class TrackApplicationsFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private ApplicationsAdapter adapter;
-    private List<ApplicationItem> applications = new ArrayList<>();
-    private List<ApplicationItem> filteredApplications = new ArrayList<>();
+    private ArrayList<ApplicationsModel> applications = new ArrayList<>();
+    private ArrayList<ApplicationsModel> filteredApplications = new ArrayList<>();
     private SharedPreference sharedPreference;
-    private RequestQueue requestQueue;
     private EditText searchEditText;
     private Spinner typeFilterSpinner;
 
@@ -43,11 +43,10 @@ public class TrackApplicationsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         sharedPreference = new SharedPreference(requireContext());
-        requestQueue = Volley.newRequestQueue(requireContext());
 
         recyclerView = view.findViewById(R.id.applications_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        adapter = new ApplicationsAdapter(filteredApplications);
+        adapter = new ApplicationsAdapter(filteredApplications, this::showApplicationDetailsDialog);
         recyclerView.setAdapter(adapter);
 
         searchEditText = view.findViewById(R.id.search_edit_text);
@@ -77,8 +76,9 @@ public class TrackApplicationsFragment extends Fragment {
 
     private void fetchApplications() {
         String studentId = sharedPreference.getValue_string("userID");
-        String token = sharedPreference.getValue_string("authToken");
-        String url = "http://10.0.2.2:5000/api/applications?studentId=" + studentId;
+        if (studentId == null) return;
+
+        String url = "http://10.0.2.2:5000/api/applications/view-all-applications/" + studentId;
 
         JsonArrayRequest request = new JsonArrayRequest(
             Request.Method.GET, url, null,
@@ -87,39 +87,31 @@ public class TrackApplicationsFragment extends Fragment {
                 for (int i = 0; i < response.length(); i++) {
                     JSONObject obj = response.optJSONObject(i);
                     if (obj != null) {
-                        applications.add(new ApplicationItem(
-                            obj.optInt("applicationId"),
-                            obj.optInt("yearApplied"),
-                            obj.optString("studentId"),
-                            obj.optString("applicationType"),
-                            obj.optString("status"),
-                            obj.optString("dateApplied")
-                        ));
+                        ApplicationsModel app = new ApplicationsModel(
+                            obj.optInt("id"),
+                            obj.optString("submitted_at"),
+                            obj.optString("type"),
+                            obj.optString("status")
+                        );
+                        applications.add(app);
                     }
                 }
                 setupTypeFilter();
                 filterApplications();
             },
             error -> Toast.makeText(requireContext(), "Failed to load applications", Toast.LENGTH_SHORT).show()
-        ) {
-            @Override
-            public java.util.Map<String, String> getHeaders() {
-                java.util.Map<String, String> headers = new java.util.HashMap<>();
-                headers.put("Authorization", "Bearer " + token);
-                return headers;
-            }
-        };
+        );
 
-        requestQueue.add(request);
+        Volley.newRequestQueue(requireContext()).add(request);
     }
 
     // Populate spinner with unique types
     private void setupTypeFilter() {
         List<String> types = new ArrayList<>();
         types.add("All");
-        for (ApplicationItem item : applications) {
-            if (!types.contains(item.applicationType)) {
-                types.add(item.applicationType);
+        for (ApplicationsModel item : applications) {
+            if (!types.contains(item.getType())) {
+                types.add(item.getType());
             }
         }
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, types);
@@ -132,9 +124,9 @@ public class TrackApplicationsFragment extends Fragment {
         String searchText = searchEditText.getText().toString().trim();
         String selectedType = (String) typeFilterSpinner.getSelectedItem();
         filteredApplications.clear();
-        for (ApplicationItem item : applications) {
-            boolean matchesId = searchText.isEmpty() || String.valueOf(item.applicationId).contains(searchText);
-            boolean matchesType = selectedType == null || selectedType.equals("All") || item.applicationType.equals(selectedType);
+        for (ApplicationsModel item : applications) {
+            boolean matchesId = searchText.isEmpty() || String.valueOf(item.getId()).contains(searchText);
+            boolean matchesType = selectedType == null || selectedType.equals("All") || item.getType().equals(selectedType);
             if (matchesId && matchesType) {
                 filteredApplications.add(item);
             }
@@ -142,15 +134,18 @@ public class TrackApplicationsFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
-    private void showApplicationDetailsDialog(ApplicationItem item) {
+    // THIS IS THE DIALOG THAT SHOWS WHEN "VIEW" IS CLICKED
+    private void showApplicationDetailsDialog(ApplicationsModel item) {
         View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_application_details, null);
 
-        ((TextView) dialogView.findViewById(R.id.app_id_field)).setText("Application ID: " + item.applicationId);
-        ((TextView) dialogView.findViewById(R.id.year_field)).setText("Year Applied: " + item.yearApplied);
-        ((TextView) dialogView.findViewById(R.id.student_id_field)).setText("Student ID: " + item.studentId);
-        ((TextView) dialogView.findViewById(R.id.type_field)).setText("Type: " + item.applicationType);
-        ((TextView) dialogView.findViewById(R.id.status_field)).setText("Status: " + item.status);
-        ((TextView) dialogView.findViewById(R.id.date_field)).setText("Date Applied: " + item.dateApplied);
+        ((TextView) dialogView.findViewById(R.id.app_id_field)).setText("Application ID: " + item.getId());
+        ((TextView) dialogView.findViewById(R.id.type_field)).setText("Type: " + item.getType());
+        ((TextView) dialogView.findViewById(R.id.status_field)).setText("Status: " + item.getStatus());
+        ((TextView) dialogView.findViewById(R.id.date_field)).setText("Date Applied: " + item.getDate());
+
+        // If you have year and student ID, set them here as well:
+        // ((TextView) dialogView.findViewById(R.id.year_field)).setText("Year Applied: " + item.getYear());
+        // ((TextView) dialogView.findViewById(R.id.student_id_field)).setText("Student ID: " + item.getStudentId());
 
         androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(requireContext())
                 .setView(dialogView)
@@ -162,67 +157,5 @@ public class TrackApplicationsFragment extends Fragment {
         closeBtn.setOnClickListener(v -> dialog.dismiss());
 
         dialog.show();
-    }
-
-    // Data class for an application row
-    static class ApplicationItem {
-        int applicationId;
-        int yearApplied;
-        String studentId;
-        String applicationType;
-        String status;
-        String dateApplied;
-
-        ApplicationItem(int applicationId, int yearApplied, String studentId, String applicationType, String status, String dateApplied) {
-            this.applicationId = applicationId;
-            this.yearApplied = yearApplied;
-            this.studentId = studentId;
-            this.applicationType = applicationType;
-            this.status = status;
-            this.dateApplied = dateApplied;
-        }
-    }
-
-    // RecyclerView Adapter
-    class ApplicationsAdapter extends RecyclerView.Adapter<ApplicationsAdapter.AppViewHolder> {
-        List<ApplicationItem> items;
-
-        ApplicationsAdapter(List<ApplicationItem> items) {
-            this.items = items;
-        }
-
-        @NonNull
-        @Override
-        public AppViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_application_row, parent, false);
-            return new AppViewHolder(v);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull AppViewHolder holder, int position) {
-            ApplicationItem item = items.get(position);
-            holder.appId.setText(String.valueOf(item.applicationId));
-            holder.type.setText(item.applicationType);
-
-            holder.viewBtn.setOnClickListener(v -> {
-                showApplicationDetailsDialog(item);
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return items.size();
-        }
-
-        class AppViewHolder extends RecyclerView.ViewHolder {
-            TextView appId, type;
-            Button viewBtn;
-            AppViewHolder(View v) {
-                super(v);
-                appId = v.findViewById(R.id.app_id_text);
-                type = v.findViewById(R.id.type_text);
-                viewBtn = v.findViewById(R.id.view_btn);
-            }
-        }
     }
 }

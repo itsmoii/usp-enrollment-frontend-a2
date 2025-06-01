@@ -3,6 +3,7 @@ package com.example.uspenrolme.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -30,7 +31,7 @@ public class ApplicationsAdapter extends RecyclerView.Adapter<ApplicationsAdapte
     @NonNull
     @Override
     public ApplicationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_application_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_application_row, parent, false);
         return new ApplicationViewHolder(view);
     }
 
@@ -38,11 +39,9 @@ public class ApplicationsAdapter extends RecyclerView.Adapter<ApplicationsAdapte
     public void onBindViewHolder(@NonNull ApplicationViewHolder holder, int position) {
         ApplicationsModel model = applicationList.get(position);
         holder.idText.setText(String.valueOf(model.getId()));
-        holder.dateText.setText(model.getDate());
         holder.typeText.setText(model.getType());
-        holder.statusText.setText(model.getStatus());
 
-        holder.itemView.setOnClickListener(v -> clickListener.onApplicationClick(model));
+        holder.viewBtn.setOnClickListener(v -> clickListener.onApplicationClick(model));
     }
 
     @Override
@@ -51,14 +50,14 @@ public class ApplicationsAdapter extends RecyclerView.Adapter<ApplicationsAdapte
     }
 
     static class ApplicationViewHolder extends RecyclerView.ViewHolder {
-        TextView idText, dateText, typeText, statusText;
+        TextView idText, typeText;
+        Button viewBtn;
 
         public ApplicationViewHolder(@NonNull View itemView) {
             super(itemView);
-            idText = itemView.findViewById(R.id.app_row_id);
-            dateText = itemView.findViewById(R.id.app_row_date);
-            typeText = itemView.findViewById(R.id.app_row_type);
-            statusText = itemView.findViewById(R.id.app_row_status);
+            idText = itemView.findViewById(R.id.app_id_text);
+            typeText = itemView.findViewById(R.id.type_text);
+            viewBtn = itemView.findViewById(R.id.view_btn);
         }
     }
 }

@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import androidx.fragment.app.Fragment;
 import com.example.uspenrolme.R;
 
-public class ViewApplicationsFragment extends Fragment {
+public class ViewApplicationsFragment extends Fragment implements ApplicationsAdapter.OnApplicationClickListener {
 
     private RecyclerView recyclerView;
     private ApplicationsAdapter adapter;
@@ -60,19 +60,7 @@ public class ViewApplicationsFragment extends Fragment {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        adapter = new ApplicationsAdapter(applicationList, new ApplicationsAdapter.OnApplicationClickListener() {
-            @Override
-            public void onApplicationClick(ApplicationsModel application) {
-                ApplicationDetailsFragment detailFragment = ApplicationDetailsFragment.newInstance(application);
-
-
-                requireActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.applications_details_container , detailFragment)
-                        .addToBackStack(null)
-                        .commit();
-            }
-        });
+        adapter = new ApplicationsAdapter(applicationList, this);
 
         recyclerView.setAdapter(adapter);
         backBtn.setOnClickListener(v -> requireActivity().onBackPressed());
@@ -146,6 +134,29 @@ public class ViewApplicationsFragment extends Fragment {
                 });
 
         Volley.newRequestQueue(requireContext()).add(request);
+
+
+        
+    }
+
+    @Override
+    public void onApplicationClick(ApplicationsModel model) {
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_application_details, null);
+
+        ((TextView) dialogView.findViewById(R.id.app_id_field)).setText("Application ID: " + model.getId());
+        ((TextView) dialogView.findViewById(R.id.type_field)).setText("Type: " + model.getType());
+        ((TextView) dialogView.findViewById(R.id.status_field)).setText("Status: " + model.getStatus());
+        ((TextView) dialogView.findViewById(R.id.date_field)).setText("Date Applied: " + model.getDate());
+
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setView(dialogView)
+                .create();
+
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        dialogView.findViewById(R.id.close_btn).setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
     }
 
 }
