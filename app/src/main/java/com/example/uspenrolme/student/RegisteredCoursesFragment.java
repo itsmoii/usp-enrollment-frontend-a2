@@ -24,7 +24,9 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.uspenrolme.R;
 import com.example.uspenrolme.UtilityService.SharedPreference;
+import com.example.uspenrolme.models.GradeItem;
 import com.example.uspenrolme.models.RegisteredCourseItem;
+import com.example.uspenrolme.student.GradesFragment.GradesDataProvider;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class RegisteredCoursesFragment extends Fragment {
+public class RegisteredCoursesFragment extends Fragment implements GradesDataProvider {
     private static final String TAG = "RegisteredCoursesFragment";
 
     private SharedPreference sharedPref;
@@ -65,7 +67,7 @@ public class RegisteredCoursesFragment extends Fragment {
 
     private void fetchRegisteredCoursesData() {
         String studentId = sharedPref.getValue_string("userID");
-        String registeredUrl = "http://10.0.2.2:5000/api/registered-courses?studentId=" + studentId;
+        String registeredUrl = "http://10.0.2.2:5000/api/active-registrations?studentId=" + studentId;
 
         JsonArrayRequest registeredRequest = new JsonArrayRequest(
                 Request.Method.GET,
@@ -93,6 +95,9 @@ public class RegisteredCoursesFragment extends Fragment {
                 ));
             }
             displayRegisteredCourses(currentRegisteredCourses);
+            if (getParentFragment() instanceof GradesFragment) {
+                ((GradesFragment) getParentFragment()).updateGpaAndCountDisplay();
+            }
         } catch (JSONException e) {
             Log.e(TAG, "Error parsing registered courses response", e);
             showErrorToast("Error processing registered courses data");
@@ -167,5 +172,25 @@ public class RegisteredCoursesFragment extends Fragment {
 
     private void showErrorToast(String message) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public List<GradeItem> getCompletedGradesData() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<RegisteredCourseItem> getRegisteredCoursesData() {
+        return currentRegisteredCourses;
+    }
+
+    @Override
+    public double getCalculatedGpa() {
+        return 0.0;
+    }
+
+    @Override
+    public int getRegisteredCourseCount() {
+        return currentRegisteredCourses.size();
     }
 }

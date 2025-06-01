@@ -110,17 +110,6 @@
             android:padding="16dp">
 
             <Button
-                android:id="@+id/printButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/print_grades"
-                android:backgroundTint="@color/teal_700"
-                android:textColor="@color/white"
-                android:drawableStart="@drawable/ic_print"
-                android:drawablePadding="8dp"
-                android:padding="12dp"/>
-
-            <Button
                 android:id="@+id/savePdfButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

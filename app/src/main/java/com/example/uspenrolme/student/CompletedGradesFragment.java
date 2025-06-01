@@ -22,9 +22,12 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.uspenrolme.R;  // Make sure this matches your package name
+import com.example.uspenrolme.R;
 import com.example.uspenrolme.UtilityService.SharedPreference;
 import com.example.uspenrolme.models.GradeItem;
+import com.example.uspenrolme.models.RegisteredCourseItem;
+import com.example.uspenrolme.student.GradesFragment.GradesDataProvider;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,14 +36,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class CompletedGradesFragment extends Fragment {
+public class CompletedGradesFragment extends Fragment implements GradesDataProvider {
 
     private static final String TAG = "CompletedGradesFragment";
 
     private SharedPreference sharedPref;
     private RequestQueue requestQueue;
     private List<GradeItem> currentGrades = new ArrayList<>();
-    private double currentGpa = 0.0; // GPA calculation might need to be handled differently if based on all courses
+    private double currentGpa = 0.0;
 
     private TableLayout gradesTable;
 
@@ -49,7 +52,6 @@ public class CompletedGradesFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_completed_grades, container, false);
         gradesTable = view.findViewById(R.id.gradesTable);
         return view;
@@ -97,6 +99,9 @@ public class CompletedGradesFragment extends Fragment {
                 ));
             }
             displayGrades(currentGrades);
+            if (getParentFragment() instanceof GradesFragment) {
+                ((GradesFragment) getParentFragment()).updateGpaAndCountDisplay();
+            }
         } catch (JSONException e) {
             Log.e(TAG, "Error parsing grades response", e);
             showErrorToast("Error processing grades data");
@@ -135,10 +140,6 @@ public class CompletedGradesFragment extends Fragment {
         }
 
         currentGpa = totalCourses > 0 ? totalPoints / totalCourses : 0.0;
-        // GPA TextView is in the parent GradesFragment, so this update won't work directly
-        // You'll need a way to communicate the GPA back to the parent fragment if you want to display it there.
-        // For now, this calculation is here but not displayed in this fragment.
-        // gpaTextView.setText(String.format(Locale.getDefault(), "%.2f", currentGpa));
     }
 
     private void createTableHeader(TableLayout table, String[] headers) {
@@ -201,5 +202,25 @@ public class CompletedGradesFragment extends Fragment {
 
      private void showErrorToast(String message) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public List<GradeItem> getCompletedGradesData() {
+        return currentGrades;
+    }
+
+    @Override
+    public List<RegisteredCourseItem> getRegisteredCoursesData() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public double getCalculatedGpa() {
+        return currentGpa;
+    }
+
+    @Override
+    public int getRegisteredCourseCount() {
+        return 0;
     }
 }
