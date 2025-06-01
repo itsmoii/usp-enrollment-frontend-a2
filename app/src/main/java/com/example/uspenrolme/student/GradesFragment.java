@@ -20,15 +20,6 @@ import android.print.PrintAttributes;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.content.Context;
-import android.graphics.pdf.PdfDocument;
-import android.os.Environment;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -50,12 +41,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.widget.ProgressBar;
+
 public class GradesFragment extends Fragment {
 
     private SharedPreference sharedPref;
     private RequestQueue requestQueue;
     private TableLayout gradesTable;
     private LinearLayout semesterGpaContainer;
+    private ProgressBar loadingIndicator;
 
     // Navigation components
     private Button gradesTabButton;
@@ -66,8 +60,6 @@ public class GradesFragment extends Fragment {
     // Data storage
     private List<GradeItem> allGrades = new ArrayList<>();
 
-    private Button printButton;
-
     public GradesFragment() {
         // Required empty public constructor
     }
@@ -77,9 +69,9 @@ public class GradesFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_grades, container, false);
         gradesTable = view.findViewById(R.id.gradesTable);
-        printButton = view.findViewById(R.id.printButton);
-        printButton.setOnClickListener(v -> generatePdf());
-        fetchGradesData();
+        loadingIndicator = view.findViewById(R.id.loadingIndicator);
+
+        loadGrades();
         return view;
     }
 
@@ -145,20 +137,35 @@ public class GradesFragment extends Fragment {
         }
     }
 
+    private void loadGrades() {
+        fetchGradesData();
+    }
+
     private void fetchGradesData() {
+        showLoading(true);
         String studentId = sharedPref.getString("userID", "N/A");
         String gradesUrl = "http://10.0.2.2:5000/api/completed-courses?studentId=" + studentId;
 
         JsonArrayRequest gradesRequest = new JsonArrayRequest(
                 Request.Method.GET, gradesUrl, null,
-                this::processGradesResponse,
+                response -> {
+                    processGradesResponse(response);
+                    showLoading(false);
+                },
                 error -> {
                     Log.e("GradesFragment", "Error fetching grades", error);
                     Toast.makeText(requireContext(), "Failed to load grades", Toast.LENGTH_SHORT).show();
+                    showLoading(false);
                 }
         );
 
         requestQueue.add(gradesRequest);
+    }
+
+    private void showLoading(boolean show) {
+        if (loadingIndicator != null) {
+            loadingIndicator.setVisibility(show ? View.VISIBLE : View.GONE);
+        }
     }
 
     public void processGradesResponse(JSONArray response) {
@@ -594,49 +601,12 @@ public class GradesFragment extends Fragment {
         row.addView(cell);
     }
 
-    public boolean isPassingGrade(String grade) {
-        String[] passingGrades = {"A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "S"};
-        for (String passingGrade : passingGrades) {
-            if (passingGrade.equalsIgnoreCase(grade)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
         if (requestQueue != null) {
             requestQueue.cancelAll(this);
         }
-    }
-
-    public void generatePdf() {
-        PdfDocument pdfDocument = new PdfDocument();
-        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
-        PdfDocument.Page page = pdfDocument.startPage(pageInfo);
-        Canvas canvas = page.getCanvas();
-
-        // Draw the USP logo
-        Drawable logoDrawable = getResources().getDrawable(R.drawable.uspwhitelogo);
-        Bitmap logoBitmap = ((BitmapDrawable) logoDrawable).getBitmap();
-        canvas.drawBitmap(logoBitmap, 50, 50, null);
-
-        // Draw the rest of the content
-        View content = getView();
-        content.draw(canvas);
-
-        pdfDocument.finishPage(page);
-        File file = new File(Environment.getExternalStorageDirectory(), "grades.pdf");
-        try {
-            pdfDocument.writeTo(new FileOutputStream(file));
-            Toast.makeText(getContext(), "PDF saved to " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(getContext(), "Error saving PDF", Toast.LENGTH_SHORT).show();
-        }
-        pdfDocument.close();
     }
 
     public static class GradeItem {
@@ -662,26 +632,5 @@ public class GradesFragment extends Fragment {
         public String getCampus() { return campus; }
         public String getMode() { return mode; }
         public String getGrade() { return grade; }
-    }
-
-    // Method to get all grades for testing
-    public List<GradeItem> getAllGrades() {
-        return allGrades;
-    }
-
-    // Method to calculate GPA for testing
-    public double calculateGPA(List<GradeItem> grades) {
-        double totalPoints = 0.0;
-        int totalCourses = 0;
-
-        for (GradeItem grade : grades) {
-            double gradePoints = getGradePoints(grade.getGrade());
-            if (gradePoints >= 0) {
-                totalPoints += gradePoints;
-                totalCourses++;
-            }
-        }
-
-        return totalCourses > 0 ? totalPoints / totalCourses : 0.0;
     }
 }
