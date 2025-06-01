@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/app_row_id"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="12345"
+            android:textSize="13sp"
+            android:textColor="#333333"
+            android:fontFamily="@font/garet" />
+
+        <TextView
+            android:id="@+id/app_row_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:text="2025-05-26"
+            android:textSize="13sp"
+            android:textColor="#333333"
+            android:fontFamily="@font/garet"
+            android:paddingStart="8dp" />
+
+        <TextView
+            android:id="@+id/app_row_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:text="Grade Recheck"
+            android:textSize="13sp"
+            android:textColor="#333333"
+            android:fontFamily="@font/garet"
+            android:paddingStart="8dp" />
+
+        <TextView
+            android:id="@+id/app_row_status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="Pending"
+            android:textSize="13sp"
+            android:textColor="#333333"
+            android:fontFamily="@font/garet"
+            android:paddingStart="8dp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DDDDDD" />
+</LinearLayout>

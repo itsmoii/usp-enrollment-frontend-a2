@@ -37,6 +37,14 @@ public class StudentApplicationsFragment extends Fragment {
                 openFragment(new ApplicationGradeReCheckFragment());
             }
         });
+
+        trackApplicationsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openFragment(new ViewApplicationsFragment());
+            }
+        });
+
         return view;
     }
     private void openFragment(Fragment fragment){
