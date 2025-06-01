@@ -1,6 +1,5 @@
 package com.example.uspenrolme.student;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -34,7 +33,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class CompletedGradesFragment extends Fragment implements GradesDataProvider {
 
@@ -60,17 +58,17 @@ public class CompletedGradesFragment extends Fragment implements GradesDataProvi
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setupRequestQueue();
-        fetchGradesData();
-    }
-
-    private void setupRequestQueue() {
         sharedPref = new SharedPreference(requireContext());
         requestQueue = Volley.newRequestQueue(requireContext());
+        fetchGradesData();
     }
 
     private void fetchGradesData() {
         String studentId = sharedPref.getValue_string("userID");
+        if (studentId == null || studentId.isEmpty()) {
+            showErrorToast("Student ID not found.");
+            return;
+        }
         String gradesUrl = "http://10.0.2.2:5000/api/completed-courses?studentId=" + studentId;
 
         JsonArrayRequest gradesRequest = new JsonArrayRequest(
@@ -78,7 +76,10 @@ public class CompletedGradesFragment extends Fragment implements GradesDataProvi
                 gradesUrl,
                 null,
                 this::processGradesResponse,
-                error -> Log.e(TAG, "Error fetching grades", error)
+                error -> {
+                    Log.e(TAG, "Error fetching grades", error);
+                    showErrorToast("Failed to fetch grades.");
+                }
         );
 
         requestQueue.add(gradesRequest);
@@ -91,7 +92,7 @@ public class CompletedGradesFragment extends Fragment implements GradesDataProvi
                 JSONObject gradeObj = response.getJSONObject(i);
                 currentGrades.add(new GradeItem(
                         gradeObj.optString("term", "N/A"),
-                        gradeObj.optString("CourseID", "N/A"),
+                        gradeObj.optString("course", "N/A"),
                         gradeObj.optString("title", "N/A"),
                         gradeObj.optString("campus", "N/A"),
                         gradeObj.optString("mode", "N/A"),
@@ -200,7 +201,7 @@ public class CompletedGradesFragment extends Fragment implements GradesDataProvi
         }
     }
 
-     private void showErrorToast(String message) {
+    private void showErrorToast(String message) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
     }
 
