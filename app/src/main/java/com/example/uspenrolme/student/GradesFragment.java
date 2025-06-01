@@ -235,32 +235,18 @@ public class GradesFragment extends Fragment {
         @NonNull
         @Override
         public Fragment getItem(int position) {
-            switch (position) {
-                case 0:
-                    return new CompletedGradesFragment();
-                case 1:
-                    return new RegisteredCoursesFragment();
-                default:
-                    return new CompletedGradesFragment();
-            }
+            return new CompletedGradesFragment();
         }
 
         @Nullable
         @Override
         public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "Completed";
-                case 1:
-                    return "Registered";
-                default:
-                    return null;
-            }
+            return "Completed";
         }
 
         @Override
         public int getCount() {
-            return 2;
+            return 1;
         }
     }
 
