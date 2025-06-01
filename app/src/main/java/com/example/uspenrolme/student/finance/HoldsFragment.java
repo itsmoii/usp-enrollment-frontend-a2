@@ -3,11 +3,13 @@ package com.example.uspenrolme.student.finance;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,6 +47,7 @@ public class HoldsFragment extends Fragment {
     TextView holdPlaced;
     TextView holdOverdue;
     TextView holdDue;
+    ImageView backBtn;
     double balance;
     SharedPreference sharedPreference;
     String token;
@@ -79,6 +82,16 @@ public class HoldsFragment extends Fragment {
         noStudentHold = view.findViewById(R.id.nohold);
         sharedPreference = new SharedPreference(getContext());
         token = sharedPreference.getValue_string("token");
+        backBtn = view.findViewById(R.id.hold_backBtn);
+
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.content, new FinanceMenu());
+                fragmentTransaction.commit();
+            }
+        });
 
         checkHold();
         return view;

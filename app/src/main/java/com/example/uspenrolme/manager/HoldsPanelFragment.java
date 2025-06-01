@@ -41,7 +41,6 @@ import java.util.Map;
 
 public class HoldsPanelFragment extends Fragment {
 
-    ImageView backBtn;
     Button holdBtn;
     SwitchCompat holdReg;
     SwitchCompat holdGrades;
@@ -79,7 +78,6 @@ public class HoldsPanelFragment extends Fragment {
         holdAudit = view.findViewById(R.id.hold_audit);
         holdRecheck = view.findViewById(R.id.hold_recheck);
         holdGraduation = view.findViewById(R.id.hold_graduation);
-        backBtn = view.findViewById(R.id.holds_backBtn);
         sharedPreference = new SharedPreference(getContext());
         token = sharedPreference.getValue_string("token");
 
